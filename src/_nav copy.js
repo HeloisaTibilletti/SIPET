@@ -1,17 +1,12 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
 import {
-  cilAddressBook,
-  cilAnimal,
   cilBell,
   cilCalculator,
-  cilCart,
   cilChartPie,
   cilCursor,
   cilDescription,
   cilDrop,
-  cilGroup,
-  cilMagnifyingGlass,
   cilNotes,
   cilPencil,
   cilPuzzle,
@@ -25,94 +20,28 @@ const _nav = [
     component: CNavItem,
     name: 'Dashboard',
     to: '/dashboard',
-    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,    
+    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+    badge: {
+      color: 'info',
+      text: 'NEW',
+    },
   },
-
   {
     component: CNavTitle,
-    name: 'Agendamentos',
+    name: 'Theme',
   },
-
   {
     component: CNavItem,
-    name: 'Novo Agendamento',
-    to: '/schedules',
-    icon: <CIcon icon={cilAddressBook} customClassName="nav-icon" />,
+    name: 'Colors',
+    to: '/theme/colors',
+    icon: <CIcon icon={cilDrop} customClassName="nav-icon" />,
   },
-
   {
     component: CNavItem,
-    name: 'Consultar Agendamentos',
-    to: '/old_schedules',
-    icon: <CIcon icon={cilMagnifyingGlass} customClassName="nav-icon" />,
+    name: 'Typography',
+    to: '/theme/typography',
+    icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
   },
-  
-  {
-    component: CNavTitle,
-    name: 'Gestão',
-  },
-
-  {
-    component: CNavGroup,
-    name: 'Funcionários',
-    to: '/employees',
-    icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Novo',
-        to: '/buttons/buttons',
-      },
-      {
-        component: CNavItem,
-        name: 'Consultar',
-        to: '/buttons/button-groups',
-      },
-    ],
-  },
-  
-  {
-    component: CNavGroup,
-    name: 'Clientes',
-    to: '/customers',
-    icon: <CIcon icon={cilAnimal} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Novo',
-        to: '/buttons/buttons',
-      },
-      {
-        component: CNavItem,
-        name: 'Consultar',
-        to: '/buttons/button-groups',
-      },
-    ],
-  },
-
-  {
-    component: CNavGroup,
-    name: 'Produtos',
-    to: '/products',
-    icon: <CIcon icon={cilCart} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Novo',
-        to: '/buttons/buttons',
-      },
-      {
-        component: CNavItem,
-        name: 'Consultar',
-        to: '/buttons/button-groups',
-      },
-    ],
-  },
-
-  
-
-  
-  /*/
   {
     component: CNavTitle,
     name: 'Components',
@@ -375,7 +304,7 @@ const _nav = [
     name: 'Docs',
     href: 'https://coreui.io/react/docs/templates/installation/',
     icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
-  },/*/
+  },
 ]
 
 export default _nav
