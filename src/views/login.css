@@ -1,0 +1,12 @@
+.cor-fundo {
+    background-color: #bd66a0;
+}
+
+.botao-criar {
+    background-color: #FFF;
+    border-color: #FFF;
+}
+
+.botao-criar:hover {
+    background-color: #a5578b;
+}
