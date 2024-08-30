@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import './login.css'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './login.css';
+import { Link } from 'react-router-dom';
 import {
   CAlert,
   CButton,
@@ -15,39 +15,40 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilLockLocked, cilUser } from '@coreui/icons'
+} from '@coreui/react';
+import CIcon from '@coreui/icons-react';
+import { cilLockLocked, cilUser } from '@coreui/icons';
 
 import useApi from '../services/api';
 
-
 const Login = () => {
-    const api = useApi();
-    const navigate = useNavigate();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState('');
+  const api = useApi();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // Booleano ao invés de string
 
   const handleLoginButton = async () => {
-    if(email && password) {
+    if (email && password) {
       setLoading(true);
-      const result = await api.login(email,password);
+      const result = await api.login(email, password);
       setLoading(false);
-      
-        if(result.error === ''){
-          localStorage.setItem('token', result.token);
-          navigate.push('/')
-        } else {
-          setError(result.error);
-        }
+
+  
+      if (result.error) {
+        setError(result.error); // Se `result.error` estiver indefinido, não entrará aqui
+      } else if (result.token) {
+        localStorage.setItem('token', result.token);
+        navigate('/'); // Redirecionar para a página inicial
+      } else {
+        setError('Unexpected response from server.');
+      }
     } else {
-      alert("Digite seu email e senha!")
+      alert("Digite seu email e senha!");
     }
-  }
-
-
+  };
+  
   return (
     <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
       <CContainer>
@@ -60,28 +61,35 @@ const Login = () => {
                     <h1>Login</h1>
                     <p className="text-body-secondary">Acesse a sua conta</p>
 
-                    {error !== '' &&
-                      <CAlert color='danger'>{error}</CAlert>
-                    }
+                    {error !== '' && <CAlert color='danger'>{error}</CAlert>}
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
-                      <CFormInput disabled={loading} placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} />
+                      <CFormInput 
+                        disabled={loading} 
+                        placeholder="Email" 
+                        value={email} 
+                        onChange={e=>setEmail(e.target.value)} 
+                      />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupText>
                         <CIcon icon={cilLockLocked} />
                       </CInputGroupText>
-                      <CFormInput disabled={loading}
+                      <CFormInput 
+                        disabled={loading}
                         type="password"
-                        value={password} onChange={e=>setPassword(e.target.value)} placeholder="Senha" autoComplete="current-password"
+                        value={password} 
+                        onChange={e=>setPassword(e.target.value)} 
+                        placeholder="Senha" 
+                        autoComplete="current-password"
                       />
                     </CInputGroup>
                     <CRow>
                       <CCol xs={6}>
                         <CButton color="dark" className="px-4" onClick={handleLoginButton} disabled={loading}>
-                          {loading ? 'Carregando' : 'Entrar'}
+                          {loading ? 'Carregando...' : 'Entrar'}
                         </CButton>
                       </CCol>
                       <CCol xs={6} className="text-right">
@@ -97,9 +105,7 @@ const Login = () => {
                 <CCardBody className="text-center">
                   <div>
                     <h2>Registre-se</h2>
-                    <p>
-                      Ainda não tem uma conta SISPET? Bora criar uma!
-                    </p>
+                    <p>Ainda não tem uma conta SISPET? Bora criar uma!</p>
                     <Link to="/register">
                       <CButton color="light" className="botao-criar mt-3" active tabIndex={-1}>
                         Crie sua conta!
@@ -113,7 +119,7 @@ const Login = () => {
         </CRow>
       </CContainer>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

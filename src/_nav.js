@@ -3,20 +3,24 @@ import CIcon from '@coreui/icons-react'
 import {
   cilAddressBook,
   cilAnimal,
+  cilAvTimer,
   cilBell,
   cilCalculator,
   cilCart,
   cilChartPie,
   cilCursor,
   cilDescription,
+  cilDog,
   cilDrop,
   cilGroup,
+  cilLibrary,
   cilMagnifyingGlass,
   cilNotes,
   cilPencil,
   cilPuzzle,
   cilSpeedometer,
   cilStar,
+  cilUser,
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -109,14 +113,72 @@ const _nav = [
     ],
   },
 
-  
+  {
+    component: CNavGroup,
+    name: 'Usuários',
+    to: '/users',
+    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Novo',
+        to: '/buttons/buttons',
+      },
+      {
+        component: CNavItem,
+        name: 'Consultar',
+        to: '/buttons/button-groups',
+      },
+    ],
+  },
 
-  
-  /*/
   {
     component: CNavTitle,
-    name: 'Components',
+    name: 'Unidades',
   },
+
+  {
+    component: CNavItem,
+    name: 'Racas',
+    to: '/racas',
+    icon: <CIcon icon={cilDog} customClassName="nav-icon" />,    
+  },
+
+
+  {
+    component: CNavGroup,
+    name: 'Status',
+    to: '/status',
+    icon: <CIcon icon={cilAvTimer} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Novo',
+        to: '/buttons/buttons',
+      },
+      {
+        component: CNavItem,
+        name: 'Consultar',
+        to: '/buttons/button-groups',
+      },
+    ],
+  },
+
+  {
+    component: CNavTitle,
+    name: '_________________________________',
+  },
+
+  {
+    component: CNavItem,
+    name: 'Sair',
+    to: '/logout',
+    icon: <CIcon icon={cilDrop} customClassName="nav-icon" />,    
+  },
+
+  
+
+  /*/
   {
     component: CNavGroup,
     name: 'Base',
