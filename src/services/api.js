@@ -64,6 +64,7 @@ export default () => {
             return json;
         },
 
+        // RAÇAS
         getRacas: async () => {
             let token = localStorage.getItem('token');
             let json = await request('get', '/racas', {}, token);
@@ -78,7 +79,77 @@ export default () => {
             let token = localStorage.getItem('token');
             let json = await request('put', `/racas/${id}`, data, token);
             return json;
+        },
+
+        addRaca: async (data) => {
+            let token = localStorage.getItem('token');
+            let json = await request('post', '/racas', data, token);
+            return json;
+        },
+
+        removeRaca: async (id) => {
+            let token = localStorage.getItem('token');
+            let json = await request('delete', `/racas/${id}`, {}, token);
+            
+            return json;
+        },
+
+        // STATUS
+        getStatus: async () => {
+            let token = localStorage.getItem('token');
+            let json = await request('get', '/status', {}, token);
+            if (json.error) {
+                return { error: json.error };
+            }
+            return { list: json.status, error: '' }; // Retorna a lista como 'list'
+        },
+
+        updateStatus: async (id, data) => {
+            let token = localStorage.getItem('token');
+            let json = await request('put', `/status/${id}`, data, token);
+            return json;
+        },
+
+        addStatus: async (data) => {
+            let token = localStorage.getItem('token');
+            let json = await request('post', '/status', data, token);
+            return json;
+        },
+
+        removeStatus: async (id) => {
+            let token = localStorage.getItem('token');
+            let json = await request('delete', `/status/${id}`, {}, token);
+            
+            return json;
+        },
+
+        // PRODUTOS
+        getProdutos: async () => {
+            let token = localStorage.getItem('token');
+            let json = await request('get', '/produtos', {}, token);
+            if (json.error) {
+                return { error: json.error };
+            }
+            return { list: json.produtos, error: '' }; // Retorna a lista como 'list'
+        },
+
+        updateProdutos: async (id, data) => {
+            let token = localStorage.getItem('token');
+            let json = await request('put', `/produtos/${id}`, data, token);
+            return json;
+        },
+
+        addProdutos: async (data) => {
+            let token = localStorage.getItem('token');
+            let json = await request('post', '/produtos', data, token);
+            return json;
+        },
+
+        removeProdutos: async (id) => {
+            let token = localStorage.getItem('token');
+            let json = await request('delete', `/produtos/${id}`, {}, token);
+            
+            return json;
         }
-        
     }
 }

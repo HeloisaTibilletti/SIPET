@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import useApi from '../services/api';
+import useApi from '../../../services/api';
 import { CButton, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableHeaderCell, CTableDataCell, CTableRow, CModal, CModalHeader, CModalBody, CModalFooter, CForm , CFormLabel, CFormInput} from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilCheck, cilPlus } from '@coreui/icons';
-import './Racas.css';
+import './Status.css';
 
 export default () => {
     const api = useApi();
@@ -14,7 +14,7 @@ export default () => {
     const [showModal, setShowModal] = useState(false);
     const [modalTitleField, setModalTitleField] = useState('');
     const [modalId, setModalId] = useState('');
-    const [modalLoading, setModalLoading] = useState(false)
+    const [modalLoading, setModalLoading] = useState(false);
 
     const fields = [
         {label: 'Nome', key: 'nome'}
@@ -23,7 +23,7 @@ export default () => {
     useEffect(() => {
         const req = async () => {
             try {
-                let json = await api.getRacas();
+                let json = await api.getStatus();
                 if (json.error === '') {
                     setList(
                         json.list.map((i) => ({
@@ -31,7 +31,7 @@ export default () => {
                             actions: (
                                 <div>
                                     <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(i)}>Editar</CButton>
-                                    <CButton color="danger">Excluir</CButton>
+                                    <CButton color="danger" onClick={() => handleRemoveButton(i.id)}>Excluir</CButton>
                                 </div>
                             ),
                         }))
@@ -54,7 +54,6 @@ export default () => {
     }
 
     const handleEditButton = (item) => {
-
         if (item && item.id && item.nome) {
             setModalId(item.id);
             setModalTitleField(item.nome);
@@ -65,47 +64,106 @@ export default () => {
     }
 
     const handleModalSave = async () => {
-    if (modalTitleField) {
-        setModalLoading(true);
-        const result = await api.updateRacas(modalId, {
-            nome: modalTitleField
-        });
-        setModalLoading(false);
-        if (result.error === '') {
-            setShowModal(false);
-
-            // Recarregar a lista de raças após a atualização
-            const updatedList = list.map((item) => 
-                item.id === modalId ? { ...item, nome: modalTitleField } : item
-            );
-            alert('Item Atualizado!')
-            setList(updatedList);
+        if (modalTitleField) {
+            setModalLoading(true);
             
+            let result;
+            let data = {
+                nome: modalTitleField
+            };
+
+            try {
+                if (modalId === '') {
+                    // Adicionando novo item
+                    result = await api.addStatus(data);
+                    if (result.error === '' && result.data) {
+                        const newItem = {
+                            id: result.data.id,  // ID retornado pela API
+                            nome: result.data.nome, // Nome retornado pela API
+                            actions: (
+                                <div>
+                                    <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(result.data)}>Editar</CButton>
+                                    <CButton color="danger" onClick={() => handleRemoveButton(result.data.id)}>Excluir</CButton>
+                                </div>
+                            ),
+                        };
+                        setList((prevList) => [...prevList, newItem]);
+                    } else {
+                        alert('Erro ao adicionar o status: ' + (result.error || 'Dados não retornados da API'));
+                    }
+                } else {
+                    // Atualizando item existente
+                    result = await api.updateStatus(modalId, data);
+                    if (result.error === '') {
+                        setList((prevList) =>
+                            prevList.map((item) =>
+                                item.id === modalId
+                                    ? { ...item, nome: modalTitleField }
+                                    : item
+                            )
+                        );
+                    } else {
+                        alert('Erro ao atualizar o status: ' + result.error);
+                    }
+                }
+            } catch (error) {
+                alert('Erro ao comunicar com a API: ' + error.message);
+            } finally {
+                setModalLoading(false);
+                if (result && result.error === '') {
+                    setShowModal(false);
+                }
+            }
         } else {
-            alert(result.error);
+            alert('Preencha o campo nome');
         }
-    } else {
-        alert('Preencha o campo nome');
-    }
-};
-
-
+    };
     
+    const handleRemoveButton = async (id) => {
+        console.log('ID para remoção:', id);  // Adicione esta linha para verificar o ID
+    
+        if (!id) {
+            console.error('ID não fornecido para remoção.');
+            return;
+        }
+    
+        if (window.confirm('Tem certeza que deseja excluir?')) {
+            try {
+                const result = await api.removeStatus(String(id));  // Certifique-se de passar o ID como string
+                if (result.error === '') {
+                    setList((prevList) =>
+                        prevList.filter((status) => status.id !== id)
+                    );
+                    
+                } else {
+                    alert('Erro ao remover o status: ' + result.error);
+                }
+            } catch (error) {
+                alert('Erro ao comunicar com a API: ' + error.message);
+            }
+        }
+    };
+
+    const handleNewButton = () => {
+        setModalId('');
+        setModalTitleField('');
+        setShowModal(true);
+    }
 
     return (
         <>
         <CRow>
             <CCol>
-                <h2>Consulta de Raças</h2>
+                <h2>Consulta de Status</h2>
 
                 <CCard>
                     <CCardHeader>
-                        <CButton style={{
+                        <CButton onClick={handleNewButton} style={{
                             backgroundColor: '#d995af',
                             color: 'white',
                             border: 'none'
                         }}>
-                            <CIcon icon={cilPlus} /> Nova Raça
+                            <CIcon icon={cilPlus} /> Nova Status
                         </CButton>
                     </CCardHeader>
                     <CCardBody>
@@ -139,7 +197,7 @@ export default () => {
         </CRow>
 
         <CModal visible={showModal} onClose={handleCloseModal} className="custom-modal">
-            <CModalHeader closeButton className='modal-header'>Editar Aviso</CModalHeader>
+            <CModalHeader closeButton className='modal-header'>{modalId==='' ? 'Novo' : 'Editar'} Status</CModalHeader>
 
             <CModalBody>
                 <CForm>
@@ -147,7 +205,7 @@ export default () => {
                     <CFormInput
                         type="text"
                         id="modal-title"
-                        placeholder="Digite o novo nome da raça"
+                        placeholder="Digite o novo nome do Status"
                         value={modalTitleField}
                         onChange={e => setModalTitleField(e.target.value)}
                     />

@@ -95,22 +95,10 @@ const _nav = [
   },
 
   {
-    component: CNavGroup,
+    component: CNavItem,
     name: 'Produtos',
-    to: '/products',
+    to: '/produtos',
     icon: <CIcon icon={cilCart} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Novo',
-        to: '/buttons/buttons',
-      },
-      {
-        component: CNavItem,
-        name: 'Consultar',
-        to: '/buttons/button-groups',
-      },
-    ],
   },
 
   {
@@ -146,22 +134,10 @@ const _nav = [
 
 
   {
-    component: CNavGroup,
+    component: CNavItem,
     name: 'Status',
     to: '/status',
     icon: <CIcon icon={cilAvTimer} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Novo',
-        to: '/buttons/buttons',
-      },
-      {
-        component: CNavItem,
-        name: 'Consultar',
-        to: '/buttons/button-groups',
-      },
-    ],
   },
 
   {
