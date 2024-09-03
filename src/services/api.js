@@ -150,6 +150,72 @@ export default () => {
             let json = await request('delete', `/produtos/${id}`, {}, token);
             
             return json;
-        }
+        },
+
+        // USUÁRIOS
+        getUsers: async () => {
+            let token = localStorage.getItem('token');
+            let json = await request('get', '/users', {}, token);
+            if (json.error) {
+                return { error: json.error };
+            }
+            return { list: json.users, error: '' }; // Retorna a lista como 'list'
+        },
+
+        updateUsers: async (id, data) => {
+            let token = localStorage.getItem('token');
+            let json = await request('put', `/users/${id}`, data, token);
+            return json;
+        },
+        addUsers: async (data) => {
+            let token = localStorage.getItem('token');
+            let json = await request('post', '/users', data, token);
+            return json;
+        },
+
+        removeUsers: async (id) => {
+            let token = localStorage.getItem('token');
+            let json = await request('delete', `/users/${id}`, {}, token);
+            
+            return json;
+        },
+
+        // FUNÇÃO
+        getFuncoes: async () => {
+            let token = localStorage.getItem('token');
+            let json = await request('get', '/funcao', {}, token);
+            if (json.error) {
+                return { error: json.error };
+            }
+            return { list: json.funcao, error: '' }; // Retorna a lista como 'list'
+        },
+
+        // CLIENTES
+        getClientes: async () => {
+            let token = localStorage.getItem('token');
+            let json = await request('get', '/clientes', {}, token);
+            if (json.error) {
+                return { error: json.error };
+            }
+            return { list: json.clientes, error: '' }; // Retorna a lista como 'list'
+        },
+
+        updateClientes: async (id, data) => {
+            let token = localStorage.getItem('token');
+            let json = await request('put', `/clientes/${id}`, data, token);
+            return json;
+        },
+        addClientes: async (data) => {
+            let token = localStorage.getItem('token');
+            let json = await request('post', '/clientes', data, token);
+            return json;
+        },
+
+        removeClientes: async (id) => {
+            let token = localStorage.getItem('token');
+            let json = await request('delete', `/clientes/${id}`, {}, token);
+            
+            return json;
+        },
     }
 }

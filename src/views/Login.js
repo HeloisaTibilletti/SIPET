@@ -35,7 +35,7 @@ const Login = () => {
       const result = await api.login(email, password);
       setLoading(false);
 
-  
+
       if (result.error) {
         setError(result.error); // Se `result.error` estiver indefinido, não entrará aqui
       } else if (result.token) {
@@ -48,7 +48,7 @@ const Login = () => {
       alert("Digite seu email e senha!");
     }
   };
-  
+
   return (
     <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
       <CContainer>
@@ -66,23 +66,23 @@ const Login = () => {
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
-                      <CFormInput 
-                        disabled={loading} 
-                        placeholder="Email" 
-                        value={email} 
-                        onChange={e=>setEmail(e.target.value)} 
+                      <CFormInput
+                        disabled={loading}
+                        placeholder="Email"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
                       />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupText>
                         <CIcon icon={cilLockLocked} />
                       </CInputGroupText>
-                      <CFormInput 
+                      <CFormInput
                         disabled={loading}
                         type="password"
-                        value={password} 
-                        onChange={e=>setPassword(e.target.value)} 
-                        placeholder="Senha" 
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        placeholder="Senha"
                         autoComplete="current-password"
                       />
                     </CInputGroup>
@@ -103,17 +103,16 @@ const Login = () => {
               </CCard>
               <CCard className="cor-fundo text-white py-5" style={{ width: '44%' }}>
                 <CCardBody className="text-center">
-                  <div>
-                    <h2>Registre-se</h2>
-                    <p>Ainda não tem uma conta SISPET? Bora criar uma!</p>
+                  <div style={{ textAlign: 'center' }}>
+                    <h2>Bem-Vindo ao SIPET</h2>
+                    <p>O sistema de agendamento pet mais intuitivo do mercado!</p>
                     <Link to="/register">
-                      <CButton color="light" className="botao-criar mt-3" active tabIndex={-1}>
-                        Crie sua conta!
-                      </CButton>
+                      {/* Adicione o texto ou conteúdo do link aqui */}
                     </Link>
                   </div>
                 </CCardBody>
               </CCard>
+
             </CCardGroup>
           </CCol>
         </CRow>

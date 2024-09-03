@@ -1,0 +1,32 @@
+.custom-modal .modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.custom-modal .modal-content {
+    width: 100%;
+    max-width: 800px; /* Ajuste a largura máxima do modal conforme necessário */
+    max-height: 500px;
+}
+
+.modal-header {
+    font-weight: bold;
+}
+
+.label-form {
+    font-weight: bold;
+}
+
+.botao{
+    background-color: #d995af;
+    color: aliceblue;
+}
+
+.texto{
+    color: #d995af;
+    font-weight:500;
+}
+
+

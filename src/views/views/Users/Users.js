@@ -3,7 +3,7 @@ import useApi from '../../../services/api';
 import { CButton, CSpinner, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableHeaderCell, CTableDataCell, CTableRow, CModal, CModalHeader, CModalBody, CModalFooter, CForm, CFormLabel, CFormInput } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilPlus } from '@coreui/icons';
-import './Racas.css';
+import './Users.css';
 
 export default () => {
     const api = useApi();
@@ -13,19 +13,30 @@ export default () => {
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [modalTitleField, setModalTitleField] = useState('');
+    const [modalSobrenomeField, setModalSobrenomeField] = useState('');
+    const [modalTelefoneField, setModalTelefoneField] = useState('');
+    const [modalEmailField, setModalEmailField] = useState('');
+    const [modalPasswordField, setModalPasswordField] = useState('');
+    const [modalFuncaoField, setModalFuncaoField] = useState('');
+
     const [modalId, setModalId] = useState('');
     const [modalLoading, setModalLoading] = useState(false);
     const [sortKey, setSortKey] = useState('nome'); // Define o campo padrão para ordenação
     const [sortDirection, setSortDirection] = useState('asc'); // 'asc' para ascendente, 'desc' para descendente    
 
     const fields = [
-        { label: 'Nome', key: 'nome' }
+        { label: 'Nome', key: 'nome' },
+        { label: 'Sobrenome', key: 'sobrenome' },
+        { label: 'Telefone', key: 'telefone' },
+        { label: 'Email', key: 'email' },
+        { label: 'Senha', key: 'password' },
+        { label: 'Funcao', key: 'id_funcao' }
     ];
 
     useEffect(() => {
         const req = async () => {
             try {
-                let json = await api.getRacas();
+                let json = await api.getUsers();
                 if (json.error === '') {
                     setList(
                         json.list.map((i) => ({
@@ -72,9 +83,14 @@ export default () => {
     };
 
     const handleEditButton = (item) => {
-        if (item && item.id && item.nome) {
+        if (item && item.id && item.nome && item.sobrenome && item.telefone && item.email && item.password && item.id_funcao) {
             setModalId(item.id);
             setModalTitleField(item.nome);
+            setModalSobrenomeField(item.sobrenome);
+            setModalTelefoneField(item.telefone);
+            setModalEmailField(item.email);
+            setModalPasswordField(item.password);
+            setModalFuncaoField(item.id_funcao);
             setShowModal(true);
         } else {
             console.error('Item não contém propriedades esperadas:', item);
@@ -87,17 +103,27 @@ export default () => {
 
             let result;
             let data = {
-                nome: modalTitleField
+                nome: modalTitleField,
+                sobrenome: modalSobrenomeField,
+                telefone: modalTelefoneField,
+                email: modalEmailField,
+                password: modalPasswordField,
+                id_funcao: modalFuncaoField
             };
 
             try {
                 if (modalId === '') {
                     // Adicionando novo item
-                    result = await api.addRaca(data);
+                    result = await api.addUsers(data);
                     if (result.error === '' && result.data) {
                         const newItem = {
                             id: result.data.id,  // ID retornado pela API
                             nome: result.data.nome, // Nome retornado pela API
+                            sobrenome: result.data.sobrenome,
+                            telefone: result.data.telefone,
+                            email: result.data.email,
+                            password: result.data.password,
+                            id_funcao: result.data.id_funcao,
                             actions: (
                                 <div>
                                     <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(result.data)}>Editar</CButton>
@@ -107,21 +133,27 @@ export default () => {
                         };
                         setList((prevList) => [...prevList, newItem]);
                     } else {
-                        alert('Erro ao adicionar a raça: ' + (result.error || 'Dados não retornados da API'));
+                        alert('Erro ao adicionar o usuário: ' + (result.error || 'Dados não retornados da API'));
                     }
                 } else {
                     // Atualizando item existente
-                    result = await api.updateRacas(modalId, data);
+                    result = await api.updateUsers(modalId, data);
                     if (result.error === '') {
                         setList((prevList) =>
                             prevList.map((item) =>
                                 item.id === modalId
-                                    ? { ...item, nome: modalTitleField }
+                                    ? {
+                                        ...item, nome: modalTitleField, sobrenome: modalSobrenomeField,
+                                        telefone: modalTelefoneField,
+                                        email: modalEmailField,
+                                        password: modalPasswordField,
+                                        id_funcao: modalFuncaoField
+                                    }
                                     : item
                             )
                         );
                     } else {
-                        alert('Erro ao atualizar a raça: ' + result.error);
+                        alert('Erro ao atualizar o usuário: ' + result.error);
                     }
                 }
             } catch (error) {
@@ -147,14 +179,14 @@ export default () => {
 
         if (window.confirm('Tem certeza que deseja excluir?')) {
             try {
-                const result = await api.removeRaca(String(id));  // Certifique-se de passar o ID como string
+                const result = await api.removeUsers(String(id));  // Certifique-se de passar o ID como string
                 if (result.error === '') {
                     setList((prevList) =>
-                        prevList.filter((raca) => raca.id !== id)
+                        prevList.filter((user) => user.id !== id)
                     );
 
                 } else {
-                    alert('Erro ao remover a raça: ' + result.error);
+                    alert('Erro ao remover o usuário: ' + result.error);
                 }
             } catch (error) {
                 alert('Erro ao comunicar com a API: ' + error.message);
@@ -165,14 +197,19 @@ export default () => {
     const handleNewButton = () => {
         setModalId('');
         setModalTitleField('');
-        setShowModal(true);
+        setModalSobrenomeField('');
+        setModalTelefoneField(''),
+            setModalEmailField(''),
+            setModalPasswordField(''),
+            setModalFuncaoField(''),
+            setShowModal(true);
     }
 
     return (
         <>
             <CRow>
                 <CCol>
-                    <h2>Consulta de Raças</h2>
+                    <h2>Consulta de Usuários</h2>
 
                     <CCard>
                         <CCardHeader>
@@ -181,7 +218,7 @@ export default () => {
                                 color: 'white',
                                 border: 'none'
                             }}>
-                                <CIcon icon={cilPlus} /> Nova Raça
+                                <CIcon icon={cilPlus} /> Novo Usuário
                             </CButton>
                         </CCardHeader>
                         <CCardBody>
@@ -223,7 +260,7 @@ export default () => {
             </CRow>
 
             <CModal visible={showModal} onClose={handleCloseModal} className="custom-modal">
-                <CModalHeader closeButton className='modal-header'>{modalId === '' ? 'Novo' : 'Editar'} Raça</CModalHeader>
+                <CModalHeader closeButton className='modal-header'>{modalId === '' ? 'Novo' : 'Editar'} Usuário</CModalHeader>
 
                 <CModalBody>
                     <CForm>
@@ -231,10 +268,47 @@ export default () => {
                         <CFormInput
                             type="text"
                             id="modal-title"
-                            placeholder="Digite o novo nome da raça"
+                            placeholder="Digite o nome do usuário"
                             value={modalTitleField}
                             onChange={e => setModalTitleField(e.target.value)}
                         />
+
+                        <CFormLabel htmlFor="modal-sobrenome" className='label-form'>Sobrenome</CFormLabel>
+                        <CFormInput
+                            type="text"
+                            id="modal-sobrenome"
+                            placeholder="Digite o sobrenome do usuário"
+                            value={modalSobrenomeField}
+                            onChange={e => setModalSobrenomeField(e.target.value)}
+                        />
+
+                        <CFormLabel htmlFor="modal-telefone" className='label-form'>Telefone</CFormLabel>
+                        <CFormInput
+                            type="text"
+                            id="modal-telefone"
+                            placeholder="Digite o telefone do usuário"
+                            value={modalTelefoneField}
+                            onChange={e => setModalTelefoneField(e.target.value)}
+                        />
+
+                        <CFormLabel htmlFor="modal-email" className='label-form'>Email</CFormLabel>
+                        <CFormInput
+                            type="text"
+                            id="modal-email"
+                            placeholder="Digite o email do usuário"
+                            value={modalEmailField}
+                            onChange={e => setModalEmailField(e.target.value)}
+                        />
+
+                        <CFormLabel htmlFor="modal-password" className='label-form'>Senha</CFormLabel>
+                        <CFormInput
+                            type="text"
+                            id="modal-password"
+                            placeholder="Digite a senhado usuário"
+                            value={modalPasswordField}
+                            onChange={e => setModalPasswordField(e.target.value)}
+                        />
+
                     </CForm>
                 </CModalBody>
                 <CModalFooter>

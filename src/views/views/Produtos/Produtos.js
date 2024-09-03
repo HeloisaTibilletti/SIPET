@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useApi from '../../../services/api';
-import { CButton, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableHeaderCell, CTableDataCell, CTableRow, CModal, CModalHeader, CModalBody, CModalFooter, CForm , CFormLabel, CFormInput} from '@coreui/react';
+import { CButton,CSpinner, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableHeaderCell, CTableDataCell, CTableRow, CModal, CModalHeader, CModalBody, CModalFooter, CForm , CFormLabel, CFormInput} from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilCheck, cilPlus } from '@coreui/icons';
 import './Produtos.css';
@@ -16,6 +16,8 @@ export default () => {
     const [modalValorField, setModalValorField] = useState('');
     const [modalId, setModalId] = useState('');
     const [modalLoading, setModalLoading] = useState(false);
+    const [sortKey, setSortKey] = useState('nome'); // Define o campo padrão para ordenação
+    const [sortDirection, setSortDirection] = useState('asc'); // 'asc' para ascendente, 'desc' para descendente    
 
     const fields = [
         { label: 'Nome', key: 'nome' },
@@ -169,6 +171,22 @@ export default () => {
         setShowModal(true);
     }
 
+    const sortList = (key, direction) => {
+        const sortedList = [...list].sort((a, b) => {
+            if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
+            if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+        setList(sortedList);
+    };
+
+    const handleSort = (key) => {
+        const newDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+        setSortDirection(newDirection);
+        setSortKey(key);
+        sortList(key, newDirection);
+    };
+
     return (
         <>
         <CRow>
@@ -186,65 +204,73 @@ export default () => {
                         </CButton>
                     </CCardHeader>
                     <CCardBody>
-                        {loading && <p>Loading...</p>}
-                        {error && <p>{error}</p>}
-                        {!loading && !error && (
+                            {loading && (
+                            <div className="text-center">
+                                <CSpinner color="primary" />
+                                <p>Carregando dados do banco...</p>
+                            </div>
+                            )}
+                            {error && <p>{error}</p>}
+                            {!loading && !error && (
                             <CTable striped hover bordered>
                                 <thead>
                                     <tr>
                                         {fields.map((field, index) => (
-                                            <CTableHeaderCell key={index}>{field.label}</CTableHeaderCell>
+                                            <CTableHeaderCell key={index} onClick={() => handleSort(field.key)}>
+                                                {field.label} {sortKey === field.key && (sortDirection === 'asc' ? '↑' : '↓')}
+                                            </CTableHeaderCell>
                                         ))}
                                         <CTableHeaderCell>Ações</CTableHeaderCell>
                                     </tr>
                                 </thead>
+
                                 <tbody>
-                                    {list.map((item, index) => (
-                                        <CTableRow key={item.id}>
-                                            {fields.map((field, index) => (
-                                                <CTableDataCell key={index}>{item[field.key]}</CTableDataCell>
-                                            ))}
-                                            <CTableDataCell>{item.actions}</CTableDataCell>
-                                        </CTableRow>
-                                    ))}
-                                </tbody>
-                            </CTable>
+                            {list.map((item, index) => (
+                                <CTableRow key={item.id}>
+                                {fields.map((field, index) => (
+                                    <CTableDataCell key={index}>{item[field.key]}</CTableDataCell>
+                                ))}
+                                <CTableDataCell>{item.actions}</CTableDataCell>
+                                </CTableRow>
+                            ))}
+                            </tbody>
+                        </CTable>
                         )}
                     </CCardBody>
-                </CCard>
-            </CCol>
-        </CRow>
+                                    </CCard>
+                                </CCol>
+                            </CRow>
 
-        <CModal visible={showModal} onClose={handleCloseModal} className="custom-modal">
-            <CModalHeader closeButton className='modal-header'>{modalId==='' ? 'Novo' : 'Editar'} Produto</CModalHeader>
+                            <CModal visible={showModal} onClose={handleCloseModal} className="custom-modal">
+                                <CModalHeader closeButton className='modal-header'>{modalId==='' ? 'Novo' : 'Editar'} Produto</CModalHeader>
 
-            <CModalBody>
-                <CForm>
-                    <CFormLabel htmlFor="modal-title" className='label-form'>Nome</CFormLabel>
-                    <CFormInput
-                        type="text"
-                        id="modal-title"
-                        placeholder="Digite o nome do produto"
-                        value={modalTitleField}
-                        onChange={e => setModalTitleField(e.target.value)}
-                    />
+                                <CModalBody>
+                                    <CForm>
+                                        <CFormLabel htmlFor="modal-title" className='label-form'>Nome</CFormLabel>
+                                        <CFormInput
+                                            type="text"
+                                            id="modal-title"
+                                            placeholder="Digite o nome do produto"
+                                            value={modalTitleField}
+                                            onChange={e => setModalTitleField(e.target.value)}
+                                        />
 
-                    <CFormLabel htmlFor="modal-valor" className='label-form'>Valor</CFormLabel>
-                    <CFormInput
-                        type="text"
-                        id="modal-valor"
-                        placeholder="Digite o valor do produto"
-                        value={modalValorField}
-                        onChange={e => setModalValorField(e.target.value)}
-                    />
-                </CForm>
-            </CModalBody>
-            <CModalFooter>
-                <CButton style={{backgroundColor: '#d995af', color: 'white'}} onClick={handleModalSave} disabled={modalLoading}>{modalLoading ? 'Carregando' : 'Salvar'}</CButton>
-                <CButton color="secondary" onClick={handleCloseModal}>Cancelar</CButton>
-            </CModalFooter>
-        </CModal>
+                                        <CFormLabel htmlFor="modal-valor" className='label-form'>Valor</CFormLabel>
+                                        <CFormInput
+                                            type="text"
+                                            id="modal-valor"
+                                            placeholder="Digite o valor do produto"
+                                            value={modalValorField}
+                                            onChange={e => setModalValorField(e.target.value)}
+                                        />
+                                    </CForm>
+                                </CModalBody>
+                                <CModalFooter>
+                                    <CButton style={{backgroundColor: '#d995af', color: 'white'}} onClick={handleModalSave} disabled={modalLoading}>{modalLoading ? 'Carregando' : 'Salvar'}</CButton>
+                                    <CButton color="secondary" onClick={handleCloseModal}>Cancelar</CButton>
+                                </CModalFooter>
+                            </CModal>
 
-        </>
-    );
-}
+                            </>
+                        );
+                    }

@@ -15,6 +15,9 @@ export default () => {
     const [modalTitleField, setModalTitleField] = useState('');
     const [modalId, setModalId] = useState('');
     const [modalLoading, setModalLoading] = useState(false);
+    const [sortKey, setSortKey] = useState('nome'); // Define o campo padrão para ordenação
+    const [sortDirection, setSortDirection] = useState('asc'); // 'asc' para ascendente, 'desc' para descendente    
+
 
     const fields = [
         {label: 'Nome', key: 'nome'}
@@ -52,6 +55,24 @@ export default () => {
     const handleCloseModal = () => {
         setShowModal(false);
     }
+
+    const sortList = (key, direction) => {
+        const sortedList = [...list].sort((a, b) => {
+            if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
+            if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+        setList(sortedList);
+    };
+
+    const handleSort = (key) => {
+        const newDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+        setSortDirection(newDirection);
+        setSortKey(key);
+        sortList(key, newDirection);
+    };
+    
+    
 
     const handleEditButton = (item) => {
         if (item && item.id && item.nome) {
@@ -174,11 +195,14 @@ export default () => {
                                 <thead>
                                     <tr>
                                         {fields.map((field, index) => (
-                                            <CTableHeaderCell key={index}>{field.label}</CTableHeaderCell>
+                                            <CTableHeaderCell key={index} onClick={() => handleSort(field.key)}>
+                                                {field.label} {sortKey === field.key && (sortDirection === 'asc' ? '↑' : '↓')}
+                                            </CTableHeaderCell>
                                         ))}
                                         <CTableHeaderCell>Ações</CTableHeaderCell>
                                     </tr>
                                 </thead>
+
                                 <tbody>
                                     {list.map((item, index) => (
                                         <CTableRow key={item.id}>

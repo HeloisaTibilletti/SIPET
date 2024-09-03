@@ -1,0 +1,19 @@
+.custom-modal .modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.custom-modal .modal-content {
+    width: 100%;
+    max-width: 600px; /* Ajuste a largura máxima do modal conforme necessário */
+}
+
+.modal-header {
+    font-weight: bold;
+}
+
+.label-form {
+    font-weight: bold;
+}

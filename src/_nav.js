@@ -55,43 +55,25 @@ const _nav = [
     component: CNavTitle,
     name: 'Gestão',
   },
-
-  {
-    component: CNavGroup,
-    name: 'Funcionários',
-    to: '/employees',
-    icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Novo',
-        to: '/buttons/buttons',
-      },
-      {
-        component: CNavItem,
-        name: 'Consultar',
-        to: '/buttons/button-groups',
-      },
-    ],
-  },
   
   {
-    component: CNavGroup,
+    component: CNavItem,
     name: 'Clientes',
-    to: '/customers',
+    to: '/clientes',
     icon: <CIcon icon={cilAnimal} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Novo',
-        to: '/buttons/buttons',
-      },
-      {
-        component: CNavItem,
-        name: 'Consultar',
-        to: '/buttons/button-groups',
-      },
-    ],
+  },
+
+
+  {
+    component: CNavItem,
+    name: 'Usuários',
+    to: '/users',
+    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
+  },
+
+  {
+    component: CNavTitle,
+    name: 'Unidades',
   },
 
   {
@@ -102,32 +84,8 @@ const _nav = [
   },
 
   {
-    component: CNavGroup,
-    name: 'Usuários',
-    to: '/users',
-    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Novo',
-        to: '/buttons/buttons',
-      },
-      {
-        component: CNavItem,
-        name: 'Consultar',
-        to: '/buttons/button-groups',
-      },
-    ],
-  },
-
-  {
-    component: CNavTitle,
-    name: 'Unidades',
-  },
-
-  {
     component: CNavItem,
-    name: 'Racas',
+    name: 'Raças',
     to: '/racas',
     icon: <CIcon icon={cilDog} customClassName="nav-icon" />,    
   },
