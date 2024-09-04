@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useApi from '../../../services/api';
-import { CButton, CSpinner, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableHeaderCell, CTableDataCell, CTableRow, CModal, CModalHeader, CModalBody, CModalFooter, CForm, CFormLabel, CFormInput } from '@coreui/react';
+import { CButton, CFormCheck, CSpinner, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableHeaderCell, CTableDataCell, CTableRow, CModal, CModalHeader, CModalBody, CModalFooter, CForm, CFormLabel, CFormInput } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilPlus } from '@coreui/icons';
 import './Users.css';
@@ -17,6 +17,7 @@ export default () => {
     const [modalTelefoneField, setModalTelefoneField] = useState('');
     const [modalEmailField, setModalEmailField] = useState('');
     const [modalPasswordField, setModalPasswordField] = useState('');
+    const [modalPasswordConfirmField, setModalPasswordConfirmField] = useState('');
     const [modalFuncaoField, setModalFuncaoField] = useState('');
 
     const [modalId, setModalId] = useState('');
@@ -43,7 +44,7 @@ export default () => {
                             ...i,
                             actions: (
                                 <div>
-                                    <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(i)}>Editar</CButton>
+                                    
                                     <CButton color="danger" onClick={() => handleRemoveButton(i.id)}>Excluir</CButton>
                                 </div>
                             ),
@@ -83,13 +84,13 @@ export default () => {
     };
 
     const handleEditButton = (item) => {
-        if (item && item.id && item.nome && item.sobrenome && item.telefone && item.email && item.password && item.id_funcao) {
+        if (item && item.id && item.nome && item.sobrenome && item.telefone && item.email  && item.id_funcao) {
             setModalId(item.id);
             setModalTitleField(item.nome);
             setModalSobrenomeField(item.sobrenome);
             setModalTelefoneField(item.telefone);
             setModalEmailField(item.email);
-            setModalPasswordField(item.password);
+
             setModalFuncaoField(item.id_funcao);
             setShowModal(true);
         } else {
@@ -100,7 +101,7 @@ export default () => {
     const handleModalSave = async () => {
         if (modalTitleField) {
             setModalLoading(true);
-
+    
             let result;
             let data = {
                 nome: modalTitleField,
@@ -108,17 +109,19 @@ export default () => {
                 telefone: modalTelefoneField,
                 email: modalEmailField,
                 password: modalPasswordField,
-                id_funcao: modalFuncaoField
+                password_confirm: modalPasswordConfirmField,
+                id_funcao: modalFuncaoField,
             };
-
+    
             try {
                 if (modalId === '') {
                     // Adicionando novo item
                     result = await api.addUsers(data);
-                    if (result.error === '' && result.data) {
+                    console.log('Resultado da API:', result); // Adicione esta linha para depuração
+                    if (result.hasOwnProperty('error') && result.error === '' && result.hasOwnProperty('data')) {
                         const newItem = {
-                            id: result.data.id,  // ID retornado pela API
-                            nome: result.data.nome, // Nome retornado pela API
+                            id: result.data.id,
+                            nome: result.data.nome,
                             sobrenome: result.data.sobrenome,
                             telefone: result.data.telefone,
                             email: result.data.email,
@@ -126,19 +129,20 @@ export default () => {
                             id_funcao: result.data.id_funcao,
                             actions: (
                                 <div>
-                                    <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(result.data)}>Editar</CButton>
+                                    
                                     <CButton color="danger" onClick={() => handleRemoveButton(result.data.id)}>Excluir</CButton>
                                 </div>
                             ),
                         };
                         setList((prevList) => [...prevList, newItem]);
                     } else {
-                        alert('Erro ao adicionar o usuário: ' + (result.error || 'Dados não retornados da API'));
+                        
                     }
                 } else {
                     // Atualizando item existente
                     result = await api.updateUsers(modalId, data);
-                    if (result.error === '') {
+                    console.log('Resultado da API:', result); // Adicione esta linha para depuração
+                    if (result.hasOwnProperty('error') && result.error === '') {
                         setList((prevList) =>
                             prevList.map((item) =>
                                 item.id === modalId
@@ -157,10 +161,11 @@ export default () => {
                     }
                 }
             } catch (error) {
+                console.error('Erro ao comunicar com a API:', error);
                 alert('Erro ao comunicar com a API: ' + error.message);
             } finally {
                 setModalLoading(false);
-                if (result && result.error === '') {
+                if (result && result.hasOwnProperty('error') && result.error === '') {
                     setShowModal(false);
                 }
             }
@@ -168,6 +173,7 @@ export default () => {
             alert('Preencha o campo nome');
         }
     };
+    
 
     const handleRemoveButton = async (id) => {
         console.log('ID para remoção:', id);  // Adicione esta linha para verificar o ID
@@ -201,7 +207,7 @@ export default () => {
         setModalTelefoneField(''),
             setModalEmailField(''),
             setModalPasswordField(''),
-            setModalFuncaoField(''),
+            setModalFuncaoField(1),
             setShowModal(true);
     }
 
@@ -304,11 +310,42 @@ export default () => {
                         <CFormInput
                             type="text"
                             id="modal-password"
-                            placeholder="Digite a senhado usuário"
+                            placeholder="Digite a senha do usuário"
                             value={modalPasswordField}
                             onChange={e => setModalPasswordField(e.target.value)}
                         />
 
+                        <CFormLabel htmlFor="modal-password-confirm" className='label-form'>Confirmação de Senha</CFormLabel>
+                        <CFormInput
+                            type="text"
+                            id="modal-password-confirm"
+                            placeholder="Digite novamente a senha do usuário"
+                            value={modalPasswordConfirmField}
+                            onChange={e => setModalPasswordConfirmField(e.target.value)}
+                        />
+
+                        <CFormLabel htmlFor="modal-funcao" className='label-form'>Função</CFormLabel>
+                        <CFormCheck
+                            type="radio"
+                            name="flexRadioDefault"
+                            id="modal-funcao"
+                            label="Administrador"
+                            value="1" // Valor que será salvo no banco de dados
+                            checked={modalFuncaoField === '1'} // Verifica se o valor atual é o selecionado
+                            onChange={(e) => setModalFuncaoField(e.target.value)} // Atualiza o estado quando o valor é alterado
+                            defaultChecked
+                        />
+
+                        <CFormCheck
+                            type="radio"
+                            name="flexRadioDefault"
+                            id="flexRadioDefault2"
+                            label="Esteticista"
+                            value="2" // Valor que será salvo no banco de dados
+                            checked={modalFuncaoField === '2'} // Verifica se o valor atual é o selecionado
+                            onChange={(e) => setModalFuncaoField(e.target.value)} // Atualiza o estado quando o valor é alterado
+                            
+                        />
                     </CForm>
                 </CModalBody>
                 <CModalFooter>

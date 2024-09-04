@@ -169,6 +169,7 @@ export default () => {
         setModalId('');
         setModalTitleField('');
         setShowModal(true);
+        
     }
 
     return (

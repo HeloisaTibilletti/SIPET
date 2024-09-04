@@ -64,6 +64,33 @@ export default () => {
             return json;
         },
 
+        getUsers: async () => {
+            let token = localStorage.getItem('token');
+            let json = await request('get', '/auth/index', {}, token);
+            if (json.error) {
+                return { error: json.error };
+            }
+            return { list: json.users, error: '' }; // Retorna a lista como 'list'
+        },
+
+        removeUsers: async (id) => {
+            let token = localStorage.getItem('token');
+            let json = await request('delete', `/auth/delete/${id}`, {}, token);
+            return json;
+        },
+
+        updateUsers: async (id, data) => {
+            let token = localStorage.getItem('token');
+            let json = await request('put', `/auth/update/${id}`, data, token);
+            return json;
+        },
+        
+        addUsers: async (data) => {
+            let token = localStorage.getItem('token');
+            let json = await request('post', '/auth/register', data, token);
+            return json;
+        },
+
         // RAÇAS
         getRacas: async () => {
             let token = localStorage.getItem('token');
@@ -152,34 +179,7 @@ export default () => {
             return json;
         },
 
-        // USUÁRIOS
-        getUsers: async () => {
-            let token = localStorage.getItem('token');
-            let json = await request('get', '/users', {}, token);
-            if (json.error) {
-                return { error: json.error };
-            }
-            return { list: json.users, error: '' }; // Retorna a lista como 'list'
-        },
-
-        updateUsers: async (id, data) => {
-            let token = localStorage.getItem('token');
-            let json = await request('put', `/users/${id}`, data, token);
-            return json;
-        },
-        addUsers: async (data) => {
-            let token = localStorage.getItem('token');
-            let json = await request('post', '/users', data, token);
-            return json;
-        },
-
-        removeUsers: async (id) => {
-            let token = localStorage.getItem('token');
-            let json = await request('delete', `/users/${id}`, {}, token);
-            
-            return json;
-        },
-
+         
         // FUNÇÃO
         getFuncoes: async () => {
             let token = localStorage.getItem('token');
