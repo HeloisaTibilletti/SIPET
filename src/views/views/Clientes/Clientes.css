@@ -20,8 +20,10 @@
 }
 
 .botao{
+    display: flex;
     background-color: #d995af;
     color: aliceblue;
+    margin: 20px;
 }
 
 .texto{
@@ -31,6 +33,10 @@
 
 .texto:hover {
     color: #000000; /* Altere essa cor para a desejada ao passar o mouse */
+}
+
+.no-resize {
+    resize: none; /* Impede o redimensionamento */
 }
 
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useApi from '../../../services/api';
-import { CButton, CTabs, CTabContent, CFormSelect, CTabPanel, CTabList, CTab, CSpinner, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableHeaderCell, CTableDataCell, CTableRow, CModal, CModalHeader, CModalBody, CModalFooter, CForm, CFormLabel, CFormInput } from '@coreui/react';
+import { CButton, CTabs, CTabContent, CFormSelect, CTabPanel, CTabList, CTab, CSpinner, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableHeaderCell, CTableDataCell, CTableRow, CModal, CModalHeader, CModalBody, CModalFooter, CForm, CFormLabel, CFormInput, CFormTextarea } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilPlus } from '@coreui/icons';
 import './Clientes.css';
@@ -23,14 +23,16 @@ export default () => {
     const [modalEspecieField, setModalEspecieField] = useState('');
     const [modalPorteField, setModalPorteField] = useState('');
     const [modalSexoField, setModalSexoField] = useState('');
-    const [modalCondicoesFieldField, setModalCondicoesField] = useState('');
+    const [modalCondicoesField, setModalCondicoesField] = useState('');
     const [modalTratamentosField, setModalTratamentosField] = useState('');
     const [modalId, setModalId] = useState('');
     const [modalLoading, setModalLoading] = useState(false);
+    const [modalClienteField, setModalClienteField] = useState('');
     const [sortKey, setSortKey] = useState('nome'); // Define o campo padrão para ordenação
     const [sortDirection, setSortDirection] = useState('asc'); // 'asc' para ascendente, 'desc' para descendente    
     const [activeTab, setActiveTab] = useState(1);
     const [racas, setRacas] = useState([]); // Estado para as raças
+    const [pets, setPets] = useState([]); // Para armazenar os pets
     const [modalFields, setModalFields] = useState({
         nome: '',
         sobrenome: '',
@@ -43,6 +45,8 @@ export default () => {
         especie: '',
         sexo: '',
         porte: '',
+        condicoes: '',
+        tratamentos: '',
         id: '',
     });
 
@@ -84,16 +88,12 @@ export default () => {
         req();
 
         const fetchRacas = async () => {
-            try {
-                let json = await api.getRacas(); // Assumindo que `api.getRacas` busca as raças do banco de dados
-                if (json.error === '') {
-                    setRacas(json.list); // Armazena a lista de raças no estado
-                } else {
-                    setError(json.error);
-                }
-            } catch (error) {
-                console.error('Erro ao buscar raças:', error);
-                setError('Erro ao buscar raças.');
+            const response = await api.getRacas(); // Chamada ao método getRacas
+            if (response.error) {
+                setError(response.error);
+                alert('Erro ao buscar raças: ' + response.error);
+            } else {
+                setRacas(response.list); // Atualiza o estado com a lista de raças
             }
         };
 
@@ -117,6 +117,7 @@ export default () => {
             especie: '',
             sexo: '',
             porte: '',
+            condicoes: '',
             id: '',
         });
     };
@@ -163,12 +164,14 @@ export default () => {
                 endereco: modalEnderecoField,
                 telefone: modalTelefoneField,
                 pet: {
-                    nome: modalFields.nomePet,
-                    dataNascimento: modalFields.dataPet,
-                    raca: modalFields.raca,
-                    especie: modalFields.especie,
-                    sexo: modalFields.sexo,
-                    porte: modalFields.porte,
+                    nome: modalNomePetField,
+                    dataNascimento: modalDataPetField,
+                    raca: modalRacaField,
+                    especie: modalEspecieField,
+                    sexo: modalSexoField,
+                    porte: modalPorteField,
+                    condicoes: modalCondicoesField,
+                    tratamentos: modalTratamentosField
                 }
             };
 
@@ -184,6 +187,7 @@ export default () => {
                             email: data.email,
                             endereco: data.endereco,
                             telefone: data.telefone, // Nome retornado pela API
+                            petId: data.petId,
                             actions: (
                                 <div>
                                     <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(result.data)}>Editar</CButton>
@@ -193,7 +197,7 @@ export default () => {
                         };
                         setList((prevList) => [...prevList, newItem]);
                     } else {
-                        alert('Erro ao adicionar a raça: ' + (result.error || 'Dados não retornados da API'));
+                        alert('Erro ao adicionar o cliente' + (result.error || 'Dados não retornados da API'));
                     }
                 } else {
                     // Atualizando item existente
@@ -229,12 +233,47 @@ export default () => {
     };
 
     const handleAddPet = () => {
-        // Adicione a lógica para adicionar um pet aqui
-        alert('Adicionar Pet clicado!');
+        console.log({
+            modalNomePetField,
+            modalDataPetField,
+            modalRacaField,
+            modalSexoField,
+            modalPorteField,
+            modalEspecieField,
+            modalCondicoesField,
+        });
+        if (!modalNomePetField || !modalDataPetField || !modalRacaField || !modalSexoField || !modalPorteField || !modalEspecieField || !modalCondicoesField) {
+            alert('Por favor, preencha os campos requeridos!');
+            return;
+        };
+
+        const newPet = {
+            nome: modalNomePetField,
+            dataNascimento: modalDataPetField,
+            raca: modalRacaField,
+            sexo: modalSexoField,
+            especie: modalEspecieField,
+            porte: modalPorteField,
+            condicoes: modalCondicoesField,
+            tratamentos: modalTratamentosField,
+            cliente_id: modalClienteField
+        };
+
+        setPets((prevPets) => [...prevPets, newPet]); // Adiciona o novo pet à lista
+
+        // Limpa os campos do modal
+        setModalNomePetField('');
+        setModalDataPetField('');
+        setModalRacaField('');
+        setModalSexoField('');
+        setModalEspecieField('');
+        setModalPorteField('');
+        setModalCondicoesField('');
+        setModalTratamentosField('');
     };
 
     const handleRemoveButton = async (id) => {
-        console.log('ID para remoção:', id);  
+        console.log('ID para remoção:', id);
 
         if (!id) {
             console.error('ID não fornecido para remoção.');
@@ -243,7 +282,7 @@ export default () => {
 
         if (window.confirm('Tem certeza que deseja excluir?')) {
             try {
-                const result = await api.removeClientes(String(id));  
+                const result = await api.removeClientes(String(id));
                 if (result.error === '') {
                     setList((prevList) =>
                         prevList.filter((cliente) => cliente.id !== id)
@@ -341,16 +380,16 @@ export default () => {
                                 </CTabList>
                                 <CTabContent>
                                     <CTabPanel itemKey={1}>
-                                        
+
                                         <CRow>
                                             <CCol md={6}>
                                                 <CFormLabel htmlFor="modal-title" className='label-form'>Nome</CFormLabel>
                                                 <CFormInput
                                                     type="text"
                                                     id="modal-nome"
-                                                    value={modalFields.nome}
+                                                    value={modalTitleField}
                                                     placeholder="Digite o nome"
-                                                    onChange={(e) => setModalFields({ ...modalFields, nome: e.target.value })}
+                                                    onChange={(e) => setModalTitleField(e.target.value)}
                                                 />
                                             </CCol>
                                             <CCol md={6}>
@@ -358,9 +397,9 @@ export default () => {
                                                 <CFormInput
                                                     type="text"
                                                     id="modal-sobrenome"
-                                                    value={modalFields.sobrenome}
+                                                    value={modalSobrenomeField}
                                                     placeholder="Digite o sobrenome"
-                                                    onChange={(e) => setModalFields({ ...modalFields, sobrenome: e.target.value })}
+                                                    onChange={(e) => setModalSobrenomeField(e.target.value)}
                                                 />
                                             </CCol>
                                         </CRow>
@@ -370,9 +409,9 @@ export default () => {
                                                 <CFormInput
                                                     type="email"
                                                     id="modal-email"
-                                                    value={modalFields.email}
+                                                    value={modalEmailField}
                                                     placeholder="Digite o email"
-                                                    onChange={(e) => setModalFields({ ...modalFields, email: e.target.value })}
+                                                    onChange={(e) => setModalEmailField(e.target.value)}
                                                 />
                                             </CCol>
                                             <CCol md={6}>
@@ -381,8 +420,8 @@ export default () => {
                                                     type="text"
                                                     id="modal-endereco"
                                                     placeholder="Digite o endereço"
-                                                    value={modalFields.endereco}
-                                                    onChange={(e) => setModalFields({ ...modalFields, endereco: e.target.value })}
+                                                    value={modalEnderecoField}
+                                                    onChange={(e) => setModalEnderecoField(e.target.value)}
                                                 />
                                             </CCol>
                                         </CRow>
@@ -393,23 +432,23 @@ export default () => {
                                                     type="text"
                                                     id="modal-telefone"
                                                     placeholder="Digite o telefone"
-                                                    value={modalFields.telefone}
-                                                    onChange={(e) => setModalFields({ ...modalFields, telefone: e.target.value })}
+                                                    value={modalTelefoneField}
+                                                    onChange={(e) => setModalTelefoneField(e.target.value)}
                                                 />
                                             </CCol>
                                         </CRow>
                                     </CTabPanel>
                                     <CTabPanel itemKey={2}>
-                                       
+
                                         <CRow>
                                             <CCol md={6}>
                                                 <CFormLabel htmlFor="modal-nomePet" className='label-form'>Nome do Pet</CFormLabel>
                                                 <CFormInput
                                                     type="text"
                                                     id="modal-nomePet"
-                                                    value={modalFields.nomePet}
+                                                    value={modalNomePetField}
                                                     placeholder="Digite o nome do pet"
-                                                    onChange={(e) => setModalFields({ ...modalFields, nomePet: e.target.value })}
+                                                    onChange={(e) => setModalNomePetField(e.target.value)}
                                                 />
                                             </CCol>
                                             <CCol md={6}>
@@ -417,8 +456,8 @@ export default () => {
                                                 <CFormInput
                                                     type="date"
                                                     id="modal-dataNasc"
-                                                    value={modalFields.dataPet}
-                                                    onChange={(e) => setModalFields({ ...modalFields, dataPet: e.target.value })}
+                                                    value={modalDataPetField}
+                                                    onChange={(e) => setModalDataPetField(e.target.value)}
                                                 />
                                             </CCol>
                                         </CRow>
@@ -427,21 +466,26 @@ export default () => {
                                                 <CFormLabel htmlFor="modal-raca" className='label-form'>Raça</CFormLabel>
                                                 <CFormSelect
                                                     id="modal-raca"
-                                                    value={modalFields.raca}
-                                                    onChange={(e) => setModalFields({ ...modalFields, raca: e.target.value })}
+                                                    value={modalRacaField} // Acompanhando o valor do estado
+                                                    onChange={(e) => setModalRacaField(e.target.value)} // Atualiza o estado quando a seleção muda
                                                 >
                                                     <option value="">Selecione a raça</option>
-                                                    {racas.map((raca) => (
-                                                        <option key={raca.id} value={raca.nome}>{raca.nome}</option>
-                                                    ))}
+                                                    {racas && racas.length > 0 ? ( // Verifica se há raças disponíveis
+                                                        racas.map((raca) => (
+                                                            <option key={raca.id} value={raca.nome}>{raca.nome}</option>
+                                                        ))
+                                                    ) : (
+                                                        <option disabled>Carregando raças...</option> // Mensagem de carregamento
+                                                    )}
                                                 </CFormSelect>
                                             </CCol>
+
                                             <CCol md={6}>
                                                 <CFormLabel htmlFor="modal-especie" className='label-form'>Espécie</CFormLabel>
                                                 <CFormSelect
                                                     id="modal-especie"
-                                                    value={modalFields.especie}
-                                                    onChange={(e) => setModalFields({ ...modalFields, especie: e.target.value })}
+                                                    value={modalEspecieField}
+                                                    onChange={(e) => setModalEspecieField(e.target.value)}
                                                 >
                                                     <option value="">Selecione a espécie</option>
                                                     <option value="Cachorro">Cachorro</option>
@@ -455,8 +499,8 @@ export default () => {
                                                 <CFormLabel htmlFor="modal-sexo" className='label-form'>Sexo</CFormLabel>
                                                 <CFormSelect
                                                     id="modal-sexo"
-                                                    value={modalFields.sexo}
-                                                    onChange={(e) => setModalFields({ ...modalFields, sexo: e.target.value })}
+                                                    value={modalSexoField}
+                                                    onChange={(e) => setModalSexoField(e.target.value)}
                                                 >
                                                     <option value="">Selecione o sexo</option>
                                                     <option value="Macho">Macho</option>
@@ -467,8 +511,8 @@ export default () => {
                                                 <CFormLabel htmlFor="modal-porte" className='label-form'>Porte</CFormLabel>
                                                 <CFormSelect
                                                     id="modal-porte"
-                                                    value={modalFields.porte}
-                                                    onChange={(e) => setModalFields({ ...modalFields, porte: e.target.value })}
+                                                    value={modalPorteField}
+                                                    onChange={(e) => setModalPorteField(e.target.value)}
                                                 >
                                                     <option value="">Selecione o porte</option>
                                                     <option value="Pequeno">Pequeno</option>
@@ -477,6 +521,54 @@ export default () => {
                                                 </CFormSelect>
                                             </CCol>
                                         </CRow>
+
+                                        <CRow>
+                                            <CCol md={6}>
+                                                <CFormLabel htmlFor="modal-condicoes" className='label-form'>Condições Físicas *</CFormLabel>
+                                                <CFormTextarea
+                                                    id="modal-condicoes"
+                                                    className="no-resize"
+                                                    value={modalCondicoesField}
+                                                    placeholder="Digite as condições físicas do pet"
+                                                    onChange={(e) => setModalCondicoesField(e.target.value)}
+                                                />
+                                            </CCol>
+
+                                            <CCol md={6}>
+                                                <CFormLabel htmlFor="modal-tratamentos" className='label-form'>Tratamentos Especiais</CFormLabel>
+                                                <CFormTextarea
+                                                    id="modal-tratamentos"
+                                                    className="no-resize"
+                                                    value={modalTratamentosField}
+                                                    placeholder="Digite os tratamentos especiais do pet"
+                                                    onChange={(e) => setModalTratamentosField(e.target.value)}
+                                                />
+                                            </CCol>
+                                        </CRow>
+
+
+                                        <CButton className='botao' onClick={handleAddPet}>Adicionar Pet</CButton>
+                                        {/* Tabela para mostrar os pets adicionados */}
+                                        <div className="mt-3">
+                                            <CTable striped hover bordered>
+                                                <thead>
+                                                    <tr>
+                                                        <CTableHeaderCell>Nome</CTableHeaderCell>
+                                                        <CTableHeaderCell>Data de Nascimento</CTableHeaderCell>
+                                                        <CTableHeaderCell>Raça</CTableHeaderCell>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {pets.map((pet, index) => (
+                                                        <CTableRow key={index}>
+                                                            <CTableDataCell>{pet.nome}</CTableDataCell>
+                                                            <CTableDataCell>{pet.dataNascimento}</CTableDataCell>
+                                                            <CTableDataCell>{pet.raca}</CTableDataCell>
+                                                        </CTableRow>
+                                                    ))}
+                                                </tbody>
+                                            </CTable>
+                                        </div>
                                     </CTabPanel>
                                 </CTabContent>
                             </CTabs>
