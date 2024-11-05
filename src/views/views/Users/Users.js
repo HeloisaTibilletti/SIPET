@@ -31,7 +31,7 @@ export default () => {
         { label: 'Telefone', key: 'telefone' },
         { label: 'Email', key: 'email' },
         { label: 'Senha', key: 'password' },
-        { label: 'Funcao', key: 'id_funcao' }
+        { label: 'Função', key: 'id_funcao' }
     ];
 
     useEffect(() => {

@@ -224,7 +224,7 @@ export default () => {
                 }
             }
         } else {
-            alert('Preencha os campos');
+            alert('Preencha os campo');
         }
     };
 
@@ -234,7 +234,7 @@ export default () => {
     };
 
     const handleRemoveButton = async (id) => {
-        console.log('ID para remoção:', id);  
+        console.log('ID para remoção:', id);  // Adicione esta linha para verificar o ID
 
         if (!id) {
             console.error('ID não fornecido para remoção.');
@@ -243,7 +243,7 @@ export default () => {
 
         if (window.confirm('Tem certeza que deseja excluir?')) {
             try {
-                const result = await api.removeClientes(String(id));  
+                const result = await api.removeClientes(String(id));  // Certifique-se de passar o ID como string
                 if (result.error === '') {
                     setList((prevList) =>
                         prevList.filter((cliente) => cliente.id !== id)
@@ -323,9 +323,9 @@ export default () => {
                 </CCol>
             </CRow>
 
-            <CModal visible={showModal} onClose={handleCloseModal} size="lg">
+            <CModal visible={showModal} onClose={handleCloseModal} size="lg" className='custom-modal'>
                 <CModalHeader>
-                    <h5>{modalFields.id ? 'Editar Cliente' : 'Novo Cliente'}</h5>
+                    <h5>{modalId ? 'Editar Cliente' : 'Novo Cliente'}</h5>
                 </CModalHeader>
                 <CModalBody>
                     {modalLoading ? (
@@ -334,114 +334,118 @@ export default () => {
                         </div>
                     ) : (
                         <CForm>
-                            <CTabs activeItemKey={1}> {/* Certifique-se de que activeItemKey corresponda a uma chave válida */}
-                                <CTabList variant="underline">
-                                    <CTab itemKey={1} className='texto' >Informações do Cliente</CTab>
-                                    <CTab itemKey={2} className='texto' >Informações do Pet</CTab>
-                                </CTabList>
-                                <CTabContent>
-                                    <CTabPanel itemKey={1}>
-                                        
-                                        <CRow>
-                                            <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-title" className='label-form'>Nome</CFormLabel>
-                                                <CFormInput
-                                                    type="text"
-                                                    id="modal-nome"
-                                                    value={modalFields.nome}
-                                                    placeholder="Digite o nome"
-                                                    onChange={(e) => setModalFields({ ...modalFields, nome: e.target.value })}
-                                                />
-                                            </CCol>
-                                            <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-sobrenome" className='label-form'>Sobrenome</CFormLabel>
-                                                <CFormInput
-                                                    type="text"
-                                                    id="modal-sobrenome"
-                                                    value={modalFields.sobrenome}
-                                                    placeholder="Digite o sobrenome"
-                                                    onChange={(e) => setModalFields({ ...modalFields, sobrenome: e.target.value })}
-                                                />
-                                            </CCol>
-                                        </CRow>
-                                        <CRow>
-                                            <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-email" className='label-form'>Email</CFormLabel>
-                                                <CFormInput
-                                                    type="email"
-                                                    id="modal-email"
-                                                    value={modalFields.email}
-                                                    placeholder="Digite o email"
-                                                    onChange={(e) => setModalFields({ ...modalFields, email: e.target.value })}
-                                                />
-                                            </CCol>
-                                            <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-endereco" className='label-form'>Endereço</CFormLabel>
-                                                <CFormInput
-                                                    type="text"
-                                                    id="modal-endereco"
-                                                    placeholder="Digite o endereço"
-                                                    value={modalFields.endereco}
-                                                    onChange={(e) => setModalFields({ ...modalFields, endereco: e.target.value })}
-                                                />
-                                            </CCol>
-                                        </CRow>
-                                        <CRow>
-                                            <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-telefone" className='label-form'>Telefone</CFormLabel>
-                                                <CFormInput
-                                                    type="text"
-                                                    id="modal-telefone"
-                                                    placeholder="Digite o telefone"
-                                                    value={modalFields.telefone}
-                                                    onChange={(e) => setModalFields({ ...modalFields, telefone: e.target.value })}
-                                                />
-                                            </CCol>
-                                        </CRow>
-                                    </CTabPanel>
-                                    <CTabPanel itemKey={2}>
-                                       
-                                        <CRow>
-                                            <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-nomePet" className='label-form'>Nome do Pet</CFormLabel>
-                                                <CFormInput
-                                                    type="text"
-                                                    id="modal-nomePet"
-                                                    value={modalFields.nomePet}
-                                                    placeholder="Digite o nome do pet"
-                                                    onChange={(e) => setModalFields({ ...modalFields, nomePet: e.target.value })}
-                                                />
-                                            </CCol>
-                                            <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-dataNasc" className='label-form'>Data de Nascimento</CFormLabel>
-                                                <CFormInput
-                                                    type="date"
-                                                    id="modal-dataNasc"
-                                                    value={modalFields.dataPet}
-                                                    onChange={(e) => setModalFields({ ...modalFields, dataPet: e.target.value })}
-                                                />
-                                            </CCol>
-                                        </CRow>
-                                        <CRow>
-                                            <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-raca" className='label-form'>Raça</CFormLabel>
-                                                <CFormSelect
-                                                    id="modal-raca"
-                                                    value={modalFields.raca}
-                                                    onChange={(e) => setModalFields({ ...modalFields, raca: e.target.value })}
-                                                >
-                                                    <option value="">Selecione a raça</option>
-                                                    {racas.map((raca) => (
-                                                        <option key={raca.id} value={raca.nome}>{raca.nome}</option>
-                                                    ))}
-                                                </CFormSelect>
-                                            </CCol>
+                            <div className="underline">
+                                <CTabs activeItemKey={1}> {/* Certifique-se de que activeItemKey corresponda a uma chave válida */}
+                                    <CTabList variant="underline">
+                                        <CTab itemKey={1} className='texto' >Informações do Cliente</CTab>
+                                        <CTab aria-controls="profile-tab-pane" itemKey={2} className='texto' >Informações do Pet</CTab>
+                                    </CTabList>
+                                    <CTabContent>
+                                        <CTabPanel itemKey={1}>
+                                            <div className="row">
+                                                <div className="col-md-6">
+                                                    <CFormLabel htmlFor="modal-title" className='label-form'>Nome</CFormLabel>
+                                                    <CFormInput
+                                                        type="text"
+                                                        id="modal-title"
+                                                        placeholder="Digite o nome"
+                                                        value={modalTitleField}
+                                                        onChange={e => setModalTitleField(e.target.value)}
+                                                    />
+                                                </div>
+                                                <div className="col-md-6">
+                                                    <CFormLabel htmlFor="modal-sobrenome" className='label-form' >Sobrenome</CFormLabel>
+                                                    <CFormInput
+                                                        type="text"
+                                                        id="modal-sobrenome"
+                                                        placeholder='Digite o sobrenome'
+                                                        value={modalSobrenomeField}
+                                                        onChange={(e) => setModalSobrenomeField(e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-md-6">
+                                                    <CFormLabel htmlFor="modal-email" className='label-form'>Email</CFormLabel>
+                                                    <CFormInput
+                                                        type="email"
+                                                        id="modal-email"
+                                                        placeholder="Digite o email"
+                                                        value={modalEmailField}
+                                                        onChange={(e) => setModalEmailField(e.target.value)}
+                                                    />
+                                                </div>
+                                                <div className="col-md-10">
+                                                    <CFormLabel htmlFor="modal-endereco" className='label-form'>Endereço</CFormLabel>
+                                                    <CFormInput
+                                                        type="text"
+                                                        id="modal-endereco"
+                                                        placeholder="Digite o endereço"
+                                                        value={modalEnderecoField}
+                                                        onChange={(e) => setModalEnderecoField(e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-md-6">
+                                                    <CFormLabel htmlFor="modal-telefone" className='label-form'>Telefone</CFormLabel>
+                                                    <CFormInput
+                                                        type="tel"
+                                                        id="modal-telefone"
+                                                        placeholder="Digite o telefone"
+                                                        value={modalTelefoneField}
+                                                        onChange={(e) => setModalTelefoneField(e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <CButton className='botao' onClick={handleAddPet}>Adicionar Pet</CButton>
+
+
+                                        </CTabPanel>
+                                        <CTabPanel className="py-3" aria-labelledby="profile-tab-pane" itemKey={2}>
+                                            <div className="row">
+                                                <div className="col-md-6">
+                                                    <CFormLabel htmlFor="modal-nomePet" className='label-form'>Nome</CFormLabel>
+                                                    <CFormInput
+                                                        type="name"
+                                                        id="modal-nomePet"
+                                                        placeholder="Digite o nome do pet"
+                                                        value={modalNomePetField}
+                                                        onChange={(e) => setModalNomePetField(e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-md-6">
+                                                    <CFormLabel htmlFor="modal-DataNasc" className="label-form">
+                                                        Data de Nascimento
+                                                    </CFormLabel>
+                                                    <CFormInput
+                                                        type="date"
+                                                        id="modal-DataNasc"
+                                                        value={modalDataPetField}
+                                                        onChange={(e) => setModalDataPetField(e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <CFormLabel htmlFor="modal-raca" className='label-form'>Raça</CFormLabel>
+                                            <CFormSelect
+                                                id="modal-raca"
+                                                value={modalRacaField}
+                                                onChange={(e) => setModalRacaField(e.target.value)}
+                                            >
+                                                <option value="">Selecione a raça</option>
+                                                {racas.map((raca) => (
+                                                    <option key={raca.id} value={raca.nome}>{raca.nome}</option>
+                                                ))}
+                                            </CFormSelect>
                                             <CCol md={6}>
                                                 <CFormLabel htmlFor="modal-especie" className='label-form'>Espécie</CFormLabel>
                                                 <CFormSelect
                                                     id="modal-especie"
-                                                    value={modalFields.especie}
-                                                    onChange={(e) => setModalFields({ ...modalFields, especie: e.target.value })}
+                                                    value={modalEspecieField}
+                                                    onChange={(e) => setModalEspecieField(e.target.value)}
                                                 >
                                                     <option value="">Selecione a espécie</option>
                                                     <option value="Cachorro">Cachorro</option>
@@ -449,37 +453,37 @@ export default () => {
                                                     <option value="Pássaro">Pássaro</option>
                                                 </CFormSelect>
                                             </CCol>
-                                        </CRow>
-                                        <CRow>
                                             <CCol md={6}>
                                                 <CFormLabel htmlFor="modal-sexo" className='label-form'>Sexo</CFormLabel>
                                                 <CFormSelect
                                                     id="modal-sexo"
-                                                    value={modalFields.sexo}
-                                                    onChange={(e) => setModalFields({ ...modalFields, sexo: e.target.value })}
+                                                    value={modalSexoField}
+                                                    onChange={(e) => setModalSexoField(e.target.value)}
                                                 >
                                                     <option value="">Selecione o sexo</option>
                                                     <option value="Macho">Macho</option>
                                                     <option value="Fêmea">Fêmea</option>
                                                 </CFormSelect>
                                             </CCol>
-                                            <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-porte" className='label-form'>Porte</CFormLabel>
-                                                <CFormSelect
-                                                    id="modal-porte"
-                                                    value={modalFields.porte}
-                                                    onChange={(e) => setModalFields({ ...modalFields, porte: e.target.value })}
-                                                >
-                                                    <option value="">Selecione o porte</option>
-                                                    <option value="Pequeno">Pequeno</option>
-                                                    <option value="Médio">Médio</option>
-                                                    <option value="Grande">Grande</option>
-                                                </CFormSelect>
-                                            </CCol>
-                                        </CRow>
-                                    </CTabPanel>
-                                </CTabContent>
-                            </CTabs>
+                                            <CFormLabel htmlFor="modal-porte" className='label-form'>Porte</CFormLabel>
+                                            <CFormSelect
+                                                id="modal-porte"
+                                                value={modalPorteField}
+                                                onChange={(e) => setModalPorteField(e.target.value)}
+                                            >
+                                                <option value="">Selecione o porte</option>
+                                                <option value="Pequeno">Pequeno</option>
+                                                <option value="Médio">Médio</option>
+                                                <option value="Grande">Grande</option>
+                                            </CFormSelect>
+
+                                        </CTabPanel>
+
+
+                                        {/* Aqui você pode adicionar informações relacionadas aos pets */}
+                                    </CTabContent>
+                                </CTabs>
+                            </div>
                         </CForm>
                     )}
                 </CModalBody>
@@ -491,8 +495,7 @@ export default () => {
                         border: 'none'
                     }} onClick={handleModalSave}>Salvar</CButton>
                 </CModalFooter>
-            </CModal>
-
+            </CModal >
         </>
     );
 }

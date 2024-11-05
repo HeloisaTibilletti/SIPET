@@ -29,4 +29,8 @@
     font-weight:500;
 }
 
+.texto:hover {
+    color: #000000; /* Altere essa cor para a desejada ao passar o mouse */
+}
+
 

@@ -4,6 +4,7 @@ import { CButton, CSpinner, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, C
 import CIcon from '@coreui/icons-react';
 import { cilPlus } from '@coreui/icons';
 import './Racas.css';
+import PDFButton from '../../PDFButton';
 
 export default () => {
     const api = useApi();
@@ -183,6 +184,7 @@ export default () => {
                             }}>
                                 <CIcon icon={cilPlus} /> Nova Raça
                             </CButton>
+                            <PDFButton />
                         </CCardHeader>
                         <CCardBody>
                             {loading && (
@@ -193,7 +195,7 @@ export default () => {
                             )}
                             {error && <p>{error}</p>}
                             {!loading && !error && (
-                                <CTable striped hover bordered>
+                                <CTable id='table-to-pdf'striped hover bordered>
                                     <thead>
                                         <tr>
                                             {fields.map((field, index) => (

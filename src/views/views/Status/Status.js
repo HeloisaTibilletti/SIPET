@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import useApi from '../../../services/api';
-import { CButton, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableHeaderCell, CTableDataCell, CTableRow, CModal, CModalHeader, CModalBody, CModalFooter, CForm , CFormLabel, CFormInput} from '@coreui/react';
+import { CButton, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableHeaderCell, CTableDataCell, CTableRow, CModal, CModalHeader, CModalBody, CModalFooter, CForm, CFormLabel, CFormInput } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilCheck, cilPlus } from '@coreui/icons';
 import './Status.css';
+import PDFButton from '../../PDFButton';
+ // Importe o componente PDFButton
 
 export default () => {
     const api = useApi();
@@ -17,7 +19,6 @@ export default () => {
     const [modalLoading, setModalLoading] = useState(false);
     const [sortKey, setSortKey] = useState('nome'); // Define o campo padrão para ordenação
     const [sortDirection, setSortDirection] = useState('asc'); // 'asc' para ascendente, 'desc' para descendente    
-
 
     const fields = [
         {label: 'Nome', key: 'nome'}
@@ -72,8 +73,6 @@ export default () => {
         sortList(key, newDirection);
     };
     
-    
-
     const handleEditButton = (item) => {
         if (item && item.id && item.nome) {
             setModalId(item.id);
@@ -187,12 +186,14 @@ export default () => {
                         }}>
                             <CIcon icon={cilPlus} /> Nova Status
                         </CButton>
+                        {/* Adicionando o botão PDF */}
+                        <PDFButton />
                     </CCardHeader>
                     <CCardBody>
                         {loading && <p>Loading...</p>}
                         {error && <p>{error}</p>}
                         {!loading && !error && (
-                            <CTable striped hover bordered>
+                            <CTable id='table-to-pdf' striped hover bordered>
                                 <thead>
                                     <tr>
                                         {fields.map((field, index) => (

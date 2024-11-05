@@ -39,14 +39,14 @@ const _nav = [
 
   {
     component: CNavItem,
-    name: 'Novo Agendamento',
+    name: 'Novo',
     to: '/schedules',
     icon: <CIcon icon={cilAddressBook} customClassName="nav-icon" />,
   },
 
   {
     component: CNavItem,
-    name: 'Consultar Agendamentos',
+    name: 'Consultar',
     to: '/old_schedules',
     icon: <CIcon icon={cilMagnifyingGlass} customClassName="nav-icon" />,
   },
