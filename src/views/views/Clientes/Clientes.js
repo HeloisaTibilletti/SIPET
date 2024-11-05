@@ -56,7 +56,7 @@ export default () => {
         { label: 'Email', key: 'email' },
         { label: 'Endereco', key: 'endereco' },
         { label: 'Telefone', key: 'telefone' },
-        { label: 'Pets', key: 'id_pets' }
+        
     ];
 
     useEffect(() => {
@@ -383,7 +383,7 @@ export default () => {
 
                                         <CRow>
                                             <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-title" className='label-form'>Nome</CFormLabel>
+                                                <CFormLabel htmlFor="modal-title" className='label-form'>Nome *</CFormLabel>
                                                 <CFormInput
                                                     type="text"
                                                     id="modal-nome"
@@ -393,7 +393,7 @@ export default () => {
                                                 />
                                             </CCol>
                                             <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-sobrenome" className='label-form'>Sobrenome</CFormLabel>
+                                                <CFormLabel htmlFor="modal-sobrenome" className='label-form'>Sobrenome *</CFormLabel>
                                                 <CFormInput
                                                     type="text"
                                                     id="modal-sobrenome"
@@ -405,7 +405,7 @@ export default () => {
                                         </CRow>
                                         <CRow>
                                             <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-email" className='label-form'>Email</CFormLabel>
+                                                <CFormLabel htmlFor="modal-email" className='label-form'>Email *</CFormLabel>
                                                 <CFormInput
                                                     type="email"
                                                     id="modal-email"
@@ -415,7 +415,7 @@ export default () => {
                                                 />
                                             </CCol>
                                             <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-endereco" className='label-form'>Endereço</CFormLabel>
+                                                <CFormLabel htmlFor="modal-endereco" className='label-form'>Endereço *</CFormLabel>
                                                 <CFormInput
                                                     type="text"
                                                     id="modal-endereco"
@@ -427,7 +427,7 @@ export default () => {
                                         </CRow>
                                         <CRow>
                                             <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-telefone" className='label-form'>Telefone</CFormLabel>
+                                                <CFormLabel htmlFor="modal-telefone" className='label-form'>Telefone *</CFormLabel>
                                                 <CFormInput
                                                     type="text"
                                                     id="modal-telefone"
@@ -442,7 +442,7 @@ export default () => {
 
                                         <CRow>
                                             <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-nomePet" className='label-form'>Nome do Pet</CFormLabel>
+                                                <CFormLabel htmlFor="modal-nomePet" className='label-form'>Nome do Pet *</CFormLabel>
                                                 <CFormInput
                                                     type="text"
                                                     id="modal-nomePet"
@@ -452,7 +452,7 @@ export default () => {
                                                 />
                                             </CCol>
                                             <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-dataNasc" className='label-form'>Data de Nascimento</CFormLabel>
+                                                <CFormLabel htmlFor="modal-dataNasc" className='label-form'>Data de Nascimento *</CFormLabel>
                                                 <CFormInput
                                                     type="date"
                                                     id="modal-dataNasc"
@@ -463,25 +463,25 @@ export default () => {
                                         </CRow>
                                         <CRow>
                                             <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-raca" className='label-form'>Raça</CFormLabel>
+                                                <CFormLabel htmlFor="modal-raca" className='label-form'>Raça *</CFormLabel>
                                                 <CFormSelect
                                                     id="modal-raca"
-                                                    value={modalRacaField} // Acompanhando o valor do estado
-                                                    onChange={(e) => setModalRacaField(e.target.value)} // Atualiza o estado quando a seleção muda
+                                                    value={modalRacaField} 
+                                                    onChange={(e) => setModalRacaField(e.target.value)} 
                                                 >
                                                     <option value="">Selecione a raça</option>
-                                                    {racas && racas.length > 0 ? ( // Verifica se há raças disponíveis
+                                                    {racas && racas.length > 0 ? ( 
                                                         racas.map((raca) => (
                                                             <option key={raca.id} value={raca.nome}>{raca.nome}</option>
                                                         ))
                                                     ) : (
-                                                        <option disabled>Carregando raças...</option> // Mensagem de carregamento
+                                                        <option disabled>Carregando raças...</option> 
                                                     )}
                                                 </CFormSelect>
                                             </CCol>
 
                                             <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-especie" className='label-form'>Espécie</CFormLabel>
+                                                <CFormLabel htmlFor="modal-especie" className='label-form'>Espécie *</CFormLabel>
                                                 <CFormSelect
                                                     id="modal-especie"
                                                     value={modalEspecieField}
@@ -496,7 +496,7 @@ export default () => {
                                         </CRow>
                                         <CRow>
                                             <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-sexo" className='label-form'>Sexo</CFormLabel>
+                                                <CFormLabel htmlFor="modal-sexo" className='label-form'>Sexo *</CFormLabel>
                                                 <CFormSelect
                                                     id="modal-sexo"
                                                     value={modalSexoField}
@@ -508,7 +508,7 @@ export default () => {
                                                 </CFormSelect>
                                             </CCol>
                                             <CCol md={6}>
-                                                <CFormLabel htmlFor="modal-porte" className='label-form'>Porte</CFormLabel>
+                                                <CFormLabel htmlFor="modal-porte" className='label-form'>Porte *</CFormLabel>
                                                 <CFormSelect
                                                     id="modal-porte"
                                                     value={modalPorteField}
@@ -554,8 +554,13 @@ export default () => {
                                                 <thead>
                                                     <tr>
                                                         <CTableHeaderCell>Nome</CTableHeaderCell>
-                                                        <CTableHeaderCell>Data de Nascimento</CTableHeaderCell>
+                                                        <CTableHeaderCell>DataNascimento</CTableHeaderCell>
                                                         <CTableHeaderCell>Raça</CTableHeaderCell>
+                                                        <CTableHeaderCell>Espécie</CTableHeaderCell>
+                                                        <CTableHeaderCell>Sexo</CTableHeaderCell>
+                                                        <CTableHeaderCell>Porte</CTableHeaderCell>
+                                                        <CTableHeaderCell>Condições F</CTableHeaderCell>
+                                                        <CTableHeaderCell>Tratamentos Esp</CTableHeaderCell>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -564,6 +569,7 @@ export default () => {
                                                             <CTableDataCell>{pet.nome}</CTableDataCell>
                                                             <CTableDataCell>{pet.dataNascimento}</CTableDataCell>
                                                             <CTableDataCell>{pet.raca}</CTableDataCell>
+                                                            
                                                         </CTableRow>
                                                     ))}
                                                 </tbody>
