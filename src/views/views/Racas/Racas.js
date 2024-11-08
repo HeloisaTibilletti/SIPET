@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import useApi from '../../../services/api';
 import { CButton, CSpinner, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableHeaderCell, CTableDataCell, CTableRow, CModal, CModalHeader, CModalBody, CModalFooter, CForm, CFormLabel, CFormInput } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
-import { cilPlus } from '@coreui/icons';
+import { cilCheck, cilPlus, cilTrash, cilPencil } from '@coreui/icons';
 import './Racas.css';
 import PDFButton from '../../PDFButton';
 
@@ -33,8 +33,14 @@ export default () => {
                             ...i,
                             actions: (
                                 <div>
-                                    <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(i)}>Editar</CButton>
-                                    <CButton color="danger" onClick={() => handleRemoveButton(i.id)}>Excluir</CButton>
+                                    <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(i)}>
+                                    <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
+                                    Editar
+                                </CButton>
+                                <CButton color="danger" onClick={() => handleRemoveButton(i.id)}>
+                                    <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
+                                    Excluir
+                                </CButton>
                                 </div>
                             ),
                         }))
@@ -184,7 +190,6 @@ export default () => {
                             }}>
                                 <CIcon icon={cilPlus} /> Nova Raça
                             </CButton>
-                            <PDFButton />
                         </CCardHeader>
                         <CCardBody>
                             {loading && (
@@ -195,7 +200,7 @@ export default () => {
                             )}
                             {error && <p>{error}</p>}
                             {!loading && !error && (
-                                <CTable id='table-to-pdf'striped hover bordered>
+                                <CTable id='table-to-pdf'striped hover>
                                     <thead>
                                         <tr>
                                             {fields.map((field, index) => (

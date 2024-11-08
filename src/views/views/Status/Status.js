@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import useApi from '../../../services/api';
 import { CButton, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableHeaderCell, CTableDataCell, CTableRow, CModal, CModalHeader, CModalBody, CModalFooter, CForm, CFormLabel, CFormInput } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
-import { cilCheck, cilPlus } from '@coreui/icons';
+import { cilCheck, cilPlus, cilTrash, cilPencil } from '@coreui/icons';
 import './Status.css';
 import PDFButton from '../../PDFButton';
  // Importe o componente PDFButton
@@ -34,8 +34,14 @@ export default () => {
                             ...i,
                             actions: (
                                 <div>
-                                    <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(i)}>Editar</CButton>
-                                    <CButton color="danger" onClick={() => handleRemoveButton(i.id)}>Excluir</CButton>
+                                     <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(i)}>
+                                    <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
+                                    Editar
+                                </CButton>
+                                <CButton color="danger" onClick={() => handleRemoveButton(i.id)}>
+                                    <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
+                                    Excluir
+                                </CButton>
                                 </div>
                             ),
                         }))
@@ -184,16 +190,15 @@ export default () => {
                             color: 'white',
                             border: 'none'
                         }}>
-                            <CIcon icon={cilPlus} /> Nova Status
+                            <CIcon icon={cilPlus} /> Novo Status
                         </CButton>
                         {/* Adicionando o botão PDF */}
-                        <PDFButton />
                     </CCardHeader>
                     <CCardBody>
                         {loading && <p>Loading...</p>}
                         {error && <p>{error}</p>}
                         {!loading && !error && (
-                            <CTable id='table-to-pdf' striped hover bordered>
+                            <CTable id='table-to-pdf' striped hover>
                                 <thead>
                                     <tr>
                                         {fields.map((field, index) => (

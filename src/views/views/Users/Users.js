@@ -236,7 +236,7 @@ export default () => {
                             )}
                             {error && <p>{error}</p>}
                             {!loading && !error && (
-                                <CTable striped hover bordered>
+                                <CTable striped hover>
                                     <thead>
                                         <tr>
                                             {fields.map((field, index) => (

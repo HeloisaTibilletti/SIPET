@@ -3,6 +3,7 @@ import useApi from '../../../services/api';
 import { CButton, CTabs, CTabContent, CFormSelect, CTabPanel, CTabList, CTab, CSpinner, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableHeaderCell, CTableDataCell, CTableRow, CModal, CModalHeader, CModalBody, CModalFooter, CForm, CFormLabel, CFormInput, CFormTextarea } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilPlus } from '@coreui/icons';
+import { cilTrash, cilPencil } from '@coreui/icons';
 import './Clientes.css';
 
 export default () => {
@@ -30,7 +31,7 @@ export default () => {
     const [modalClienteField, setModalClienteField] = useState('');
     const [sortKey, setSortKey] = useState('nome'); // Define o campo padrão para ordenação
     const [sortDirection, setSortDirection] = useState('asc'); // 'asc' para ascendente, 'desc' para descendente    
-    const [activeTab, setActiveTab] = useState(1);
+
     const [racas, setRacas] = useState([]); // Estado para as raças
     const [pets, setPets] = useState([]); // Para armazenar os pets
     const [modalFields, setModalFields] = useState({
@@ -56,7 +57,7 @@ export default () => {
         { label: 'Email', key: 'email' },
         { label: 'Endereco', key: 'endereco' },
         { label: 'Telefone', key: 'telefone' },
-        
+
     ];
 
     useEffect(() => {
@@ -69,8 +70,14 @@ export default () => {
                             ...i,
                             actions: (
                                 <div>
-                                    <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(i)}>Editar</CButton>
-                                    <CButton color="danger" onClick={() => handleRemoveButton(i.id)}>Excluir</CButton>
+                                    <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(i)}>
+                                    <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
+                                    Editar
+                                    </CButton>
+                                    <CButton color="danger" onClick={() => handleRemoveButton(i.id)}>
+                                    <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
+                                    Excluir
+                                    </CButton>
                                 </div>
                             ),
                         }))
@@ -105,6 +112,7 @@ export default () => {
 
     const handleCloseModal = () => {
         setShowModal(false);
+        setPets([]);
         setModalFields({
             nome: '',
             sobrenome: '',
@@ -163,31 +171,34 @@ export default () => {
                 email: modalEmailField,
                 endereco: modalEnderecoField,
                 telefone: modalTelefoneField,
-                pet: {
-                    nome: modalNomePetField,
-                    dataNascimento: modalDataPetField,
-                    raca: modalRacaField,
-                    especie: modalEspecieField,
-                    sexo: modalSexoField,
-                    porte: modalPorteField,
-                    condicoes: modalCondicoesField,
-                    tratamentos: modalTratamentosField
-                }
+            };
+
+            // Dados do pet
+            const petData = {
+                nome: modalNomePetField,
+                dataNascimento: modalDataPetField,
+                raca: modalRacaField,
+                especie: modalEspecieField,
+                sexo: modalSexoField,
+                porte: modalPorteField,
+                condicoes: modalCondicoesField,
+                tratamentos: modalTratamentosField,
             };
 
             try {
                 if (modalId === '') {
-                    // Adicionando novo item
+                    // Adicionando novo cliente
                     result = await api.addClientes(data);
+                    console.log('Resultado ao adicionar cliente:', result);
+
                     if (result.error === '' && result.data) {
                         const newItem = {
                             id: result.data.id,  // ID retornado pela API
                             nome: result.data.nome,
-                            sobrenome: data.sobrenome,
-                            email: data.email,
-                            endereco: data.endereco,
-                            telefone: data.telefone, // Nome retornado pela API
-                            petId: data.petId,
+                            sobrenome: result.data.sobrenome,
+                            email: result.data.email,
+                            endereco: result.data.endereco,
+                            telefone: result.data.telefone,
                             actions: (
                                 <div>
                                     <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(result.data)}>Editar</CButton>
@@ -195,12 +206,28 @@ export default () => {
                                 </div>
                             ),
                         };
+
+                        // Agora que o cliente foi salvo, associamos o pet com o cliente_id
+                        const petResult = await api.addPet({
+                            ...petData,  // Dados do pet
+                            cliente_id: result.data.id,  // Associando o pet ao cliente
+                        });
+                        console.log('Resultado ao adicionar pet:', petResult);
+
+                        if (petResult.error === '') {
+                            setPets((prevPets) => [...prevPets, petResult.data]); // Adiciona o pet à lista
+                        } else {
+                            alert('Erro ao adicionar o pet: ' + petResult.error);
+                        }
+
+                        // Adiciona o cliente à lista
                         setList((prevList) => [...prevList, newItem]);
+
                     } else {
-                        alert('Erro ao adicionar o cliente' + (result.error || 'Dados não retornados da API'));
+                        alert('Erro ao adicionar o cliente: ' + (result.error || 'Dados não retornados da API'));
                     }
                 } else {
-                    // Atualizando item existente
+                    // Atualizando cliente existente
                     result = await api.updateClientes(modalId, data);
                     if (result.error === '') {
                         setList((prevList) =>
@@ -232,16 +259,10 @@ export default () => {
         }
     };
 
+
+
+
     const handleAddPet = () => {
-        console.log({
-            modalNomePetField,
-            modalDataPetField,
-            modalRacaField,
-            modalSexoField,
-            modalPorteField,
-            modalEspecieField,
-            modalCondicoesField,
-        });
         if (!modalNomePetField || !modalDataPetField || !modalRacaField || !modalSexoField || !modalPorteField || !modalEspecieField || !modalCondicoesField) {
             alert('Por favor, preencha os campos requeridos!');
             return;
@@ -256,7 +277,7 @@ export default () => {
             porte: modalPorteField,
             condicoes: modalCondicoesField,
             tratamentos: modalTratamentosField,
-            cliente_id: modalClienteField
+            cliente_id: modalClienteField  // ID do cliente associado ao pet
         };
 
         setPets((prevPets) => [...prevPets, newPet]); // Adiciona o novo pet à lista
@@ -271,6 +292,7 @@ export default () => {
         setModalCondicoesField('');
         setModalTratamentosField('');
     };
+
 
     const handleRemoveButton = async (id) => {
         console.log('ID para remoção:', id);
@@ -333,7 +355,7 @@ export default () => {
                             )}
                             {error && <p>{error}</p>}
                             {!loading && !error && (
-                                <CTable striped hover bordered>
+                                <CTable striped hover>
                                     <thead>
                                         <tr>
                                             {fields.map((field, index) => (
@@ -466,16 +488,16 @@ export default () => {
                                                 <CFormLabel htmlFor="modal-raca" className='label-form'>Raça *</CFormLabel>
                                                 <CFormSelect
                                                     id="modal-raca"
-                                                    value={modalRacaField} 
-                                                    onChange={(e) => setModalRacaField(e.target.value)} 
+                                                    value={modalRacaField}
+                                                    onChange={(e) => setModalRacaField(e.target.value)}
                                                 >
                                                     <option value="">Selecione a raça</option>
-                                                    {racas && racas.length > 0 ? ( 
+                                                    {racas && racas.length > 0 ? (
                                                         racas.map((raca) => (
                                                             <option key={raca.id} value={raca.nome}>{raca.nome}</option>
                                                         ))
                                                     ) : (
-                                                        <option disabled>Carregando raças...</option> 
+                                                        <option disabled>Carregando raças...</option>
                                                     )}
                                                 </CFormSelect>
                                             </CCol>
@@ -569,7 +591,12 @@ export default () => {
                                                             <CTableDataCell>{pet.nome}</CTableDataCell>
                                                             <CTableDataCell>{pet.dataNascimento}</CTableDataCell>
                                                             <CTableDataCell>{pet.raca}</CTableDataCell>
-                                                            
+                                                            <CTableDataCell>{pet.especie}</CTableDataCell>
+                                                            <CTableDataCell>{pet.sexo}</CTableDataCell>
+                                                            <CTableDataCell>{pet.porte}</CTableDataCell>
+                                                            <CTableDataCell>{pet.condicoes}</CTableDataCell>
+                                                            <CTableDataCell>{pet.tratamentos}</CTableDataCell>
+
                                                         </CTableRow>
                                                     ))}
                                                 </tbody>

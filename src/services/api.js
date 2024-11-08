@@ -217,5 +217,36 @@ export default () => {
             
             return json;
         },
+
+        addPet: async (id) => {
+            let token = localStorage.getItem('token');
+            let json = await request('post', `/pets/${id}`, {}, token);
+            
+            return json;
+        },
+
+        getPet: async () => {
+            let token = localStorage.getItem('token');
+            let json = await request('get', '/pets', {}, token);
+            if (json.error) {
+                return { error: json.error };
+            }
+            return { list: json.pets, error: '' }; // Retorna a lista como 'list'
+        },
+
+        removePet: async (id) => {
+            let token = localStorage.getItem('token');
+            let json = await request('delete', `/pets/${id}`, {}, token);
+            
+            return json;
+        },
+
+        updatePet: async (id, data) => {
+            let token = localStorage.getItem('token');
+            let json = await request('put', `/pets/${id}`, data, token);
+            return json;
+        }
+        
+        
     }
 }
