@@ -1,5 +1,6 @@
 import React from 'react'
 
+const Agendamentos = React.lazy(() => import('./views/views/Agendamentos/Agendamentos'));
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));
 const Logout = React.lazy(() => import('./views/Logout'));
 const Racas = React.lazy(() => import('./views/views/Racas/Racas'));
@@ -20,6 +21,7 @@ const routes = [
   { path: '/users', name: 'Users', element: Users},
   { path: '/clientes', name: 'Clientes', element: Clientes},
   { path: '/pets', name: 'Pets', element: Pets},
+  { path: '/agendamentos', name: 'Agendamentos', element: Agendamentos},
   
 ];
 

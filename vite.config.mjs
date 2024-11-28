@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'node:path'
-import autoprefixer from 'autoprefixer'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'node:path';
+import autoprefixer from 'autoprefixer';
 
 export default defineConfig(() => {
   return {
@@ -12,7 +12,7 @@ export default defineConfig(() => {
     css: {
       postcss: {
         plugins: [
-          autoprefixer({}), // add options if needed
+          autoprefixer({}), // Adiciona opções se necessário
         ],
       },
     },
@@ -23,6 +23,13 @@ export default defineConfig(() => {
     },
     optimizeDeps: {
       force: true,
+      include: [
+        '@fullcalendar/react',
+        '@fullcalendar/core',
+        '@fullcalendar/daygrid',
+        '@fullcalendar/timegrid',
+        '@fullcalendar/interaction',
+      ],
       esbuildOptions: {
         loader: {
           '.js': 'jsx',
@@ -42,8 +49,8 @@ export default defineConfig(() => {
     server: {
       port: 3000,
       proxy: {
-        // https://vitejs.dev/config/server-options.html
+        // Configuração para redirecionamento de API, se necessário
       },
     },
-  }
-})
+  };
+});

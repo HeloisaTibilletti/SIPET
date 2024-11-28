@@ -40,8 +40,8 @@ const _nav = [
 
   {
     component: CNavItem,
-    name: 'Novo Agendamento',
-    to: '/schedules',
+    name: 'Agendamentos',
+    to: '/agendamentos',
     icon: <CIcon icon={cilAddressBook} customClassName="nav-icon" />,
   },
 

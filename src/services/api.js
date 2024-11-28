@@ -218,13 +218,8 @@ export default () => {
             return json;
         },
 
-        addPet: async (id) => {
-            let token = localStorage.getItem('token');
-            let json = await request('post', `/pets/${id}`, {}, token);
-            
-            return json;
-        },
-
+        // PET
+        
         getPet: async () => {
             let token = localStorage.getItem('token');
             let json = await request('get', '/pets', {}, token);
@@ -232,6 +227,13 @@ export default () => {
                 return { error: json.error };
             }
             return { list: json.pets, error: '' }; // Retorna a lista como 'list'
+        },
+
+        addPet: async (data) => {
+            let token = localStorage.getItem('token');
+            let json = await request('post', '/pets', data, token);
+            
+            return json;
         },
 
         removePet: async (id) => {

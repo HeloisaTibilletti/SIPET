@@ -40,14 +40,6 @@ export default () => {
         email: '',
         endereco: '',
         telefone: '',
-        nomePet: '',
-        dataPet: '',
-        raca: '',
-        especie: '',
-        sexo: '',
-        porte: '',
-        condicoes: '',
-        tratamentos: '',
         id: '',
     });
 
@@ -173,17 +165,6 @@ export default () => {
                 telefone: modalTelefoneField,
             };
 
-            // Dados do pet
-            const petData = {
-                nome: modalNomePetField,
-                dataNascimento: modalDataPetField,
-                raca: modalRacaField,
-                especie: modalEspecieField,
-                sexo: modalSexoField,
-                porte: modalPorteField,
-                condicoes: modalCondicoesField,
-                tratamentos: modalTratamentosField,
-            };
 
             try {
                 if (modalId === '') {
@@ -206,19 +187,6 @@ export default () => {
                                 </div>
                             ),
                         };
-
-                        // Agora que o cliente foi salvo, associamos o pet com o cliente_id
-                        const petResult = await api.addPet({
-                            ...petData,  // Dados do pet
-                            cliente_id: result.data.id,  // Associando o pet ao cliente
-                        });
-                        console.log('Resultado ao adicionar pet:', petResult);
-
-                        if (petResult.error === '') {
-                            setPets((prevPets) => [...prevPets, petResult.data]); // Adiciona o pet à lista
-                        } else {
-                            alert('Erro ao adicionar o pet: ' + petResult.error);
-                        }
 
                         // Adiciona o cliente à lista
                         setList((prevList) => [...prevList, newItem]);
