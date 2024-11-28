@@ -49,16 +49,14 @@ export default () => {
     useEffect(() => {
         fetchData();
         if (modalClienteField) {
-            
-            // Filtra os pets para o cliente selecionado
+
             const petsDoCliente = pets.filter(pet => pet.cliente_id === parseInt(modalClienteField));
-            
-            setPetsDoCliente(petsDoCliente); // Atualize o estado com pets filtrados
+
+            setPetsDoCliente(petsDoCliente);
         }
     }, [modalClienteField, pets]);
-    
-        
-  
+
+
 
     const handleCheckboxChange = (produto) => {
         if (produtosAdicionados.some(p => p.id === produto.id)) {
@@ -259,18 +257,19 @@ export default () => {
                                     />
                                 </div>
 
-                                <div className="total-value">
+                                <div className="valor-total">
                                     <strong>Total: R$ {valorTotal.toFixed(2)}</strong>
                                 </div>
 
-                                <CButton
-                                    onClick={handleSave}
-                                    color="primary"
-                                    className="btn-save"
-                                >
-                                    <CIcon icon={cilCheck} />
-                                    Salvar
-                                </CButton>
+                                <div className="button-container">
+                                    <CButton
+                                        onClick={handleSave}
+                                        className="save-button"
+                                    >
+                                        <CIcon icon={cilCheck} />
+                                        Salvar
+                                    </CButton>
+                                </div>
                             </CForm>
                         )}
                     </CCardBody>
