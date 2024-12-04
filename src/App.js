@@ -2,6 +2,7 @@ import React, { Suspense, useEffect } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
+
 import { CSpinner, useColorModes } from '@coreui/react'
 import './scss/style.scss'
 
@@ -28,6 +29,7 @@ const App = () => {
     if (isColorModeSet()) {
       return
     }
+    
 
     setColorMode(storedTheme)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps

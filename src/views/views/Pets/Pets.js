@@ -5,6 +5,7 @@ import CIcon from '@coreui/icons-react';
 import { cilTrash, cilPencil } from '@coreui/icons';
 import { cilCheck, cilPlus } from '@coreui/icons';
 import './Pets.css';
+import Swal from 'sweetalert2';
 
 export default () => {
     const api = useApi();
@@ -130,7 +131,7 @@ export default () => {
 
     const handleEditButton = (item) => {
         if (item.id && item.nome && item.data_nasc && item.raca_id && item.especie && item.sexo && item.porte && item.condicoes_fisicas) {
-            setModalId(item.id);
+            setModalId(item.id); // Corrigido para setar o ID corretamente
             setModalNomePetField(item.nome);
             setModalDataPetField(item.data_nasc);
             setModalRacaField(item.raca_id);
@@ -140,98 +141,108 @@ export default () => {
             setModalCondicoesField(item.condicoes_fisicas);
             setModalTratamentosField(item.tratamentos_especiais || '');
             setModalClienteField(item.cliente_id);
-
-            setShowModal(true);
+    
+            setShowModal(true); // Abre o modal para edição
         } else {
             console.error('Item não contém propriedades esperadas:', item);
         }
-
     };
+    
 
 
     const handleModalSave = async () => {
-        if (modalNomePetField) {
-            setModalLoading(true);
-
-            let result;
-            const data = {
-                nome: modalNomePetField,
-                data_nasc: modalDataPetField,
-                raca_id: modalRacaField,
-                sexo: modalSexoField,
-                especie: modalEspecieField,
-                porte: modalPorteField,
-                condicoes_fisicas: modalCondicoesField,
-                tratamentos_especiais: modalTratamentosField,
-                cliente_id: modalClienteField,
-            };
-
-            try {
-                if (modalFields.id === '') {
-                    // Adicionando um novo pet
-                    result = await api.addPet(data);
-
-                    // Verificar se a resposta tem dados ou se a estrutura precisa de ajuste
-                    if (result && result.data) {
-                        const newItem = {
-                            id: result.data.id,
-                            nome: result.data.nome,
-                            data_nasc: result.data.data_nasc,
-                            raca_id: result.data.raca_id,
-                            especie: result.data.especie,
-                            porte: result.data.porte,
-                            condicoes_fisicas: result.data.condicoes_fisicas,
-                            tratamentos_especiais: result.data.tratamentos_especiais,
-                            cliente_id: modalFields.cliente_id,
-                            actions: (
-                                <div>
-                                    <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(result.data)}>Editar</CButton>
-                                    <CButton color="danger" onClick={() => handleRemoveButton(result.data.id)}>Excluir</CButton>
-                                </div>
-                            ),
-                        };
-
-                        setList((prevList) => [...prevList, newItem]);
-
-                    } else {
-                        alert('Erro ao adicionar o pet: ' + (result.error || 'Dados não retornados da API'));
-                    }
-                } else {
-                    // Atualizando pet existente
-                    result = await api.updatePet(modalFields.id, data);
-                    if (result && result.data) {
-                        setList((prevList) =>
-                            prevList.map((item) =>
-                                item.id === modalFields.id
-                                    ? {
-                                        ...item,
-                                        nome: result.data.nome,
-                                        raca: result.data.raca,
-                                        data_nasc: result.data.data_nasc,
-                                        especie: result.data.especie,
-                                        porte: result.data.porte,
-                                        condicoes_fisicas: result.data.condicoes_fisicas,
-                                        tratamentos_especiais: result.data.tratamentos_especiais,
-                                        cliente_id: result.data.cliente_id,
-                                    }
-                                    : item
-                            )
-                        );
-                    } else {
-                        alert('Erro ao atualizar o pet: ' + result.error);
-                    }
-                }
-            } catch (error) {
-                alert('Erro ao comunicar com a API: ' + error.message);
-            } finally {
-                setModalLoading(false);
-                setShowModal(false);
-            }
-        } else {
-            alert('Preencha os campos');
+        if (!modalNomePetField || !modalDataPetField || !modalRacaField || !modalSexoField || !modalEspecieField || !modalPorteField || !modalCondicoesField) {
+            alert('Preencha todos os campos obrigatórios');
+            return;
         }
+    
+        setModalLoading(true);
+    
+        const data = {
+            nome: modalNomePetField,
+            data_nasc: modalDataPetField,
+            raca_id: modalRacaField,
+            sexo: modalSexoField,
+            especie: modalEspecieField,
+            porte: modalPorteField,
+            condicoes_fisicas: modalCondicoesField,
+            tratamentos_especiais: modalTratamentosField,
+            cliente_id: modalClienteField,
+        };
+    
+        console.log('Payload enviado para o back-end:', data);
+    
+        try {
+            if (!modalId) {  // Checamos se o ID não está vazio
+                // Adicionando um novo pet
+                const result = await api.addPet(data);
+                if (result && result.error === '') {
+                    Swal.fire({
+                        title: 'Pet Adicionado!',
+                        text: 'O novo pet foi adicionado com sucesso.',
+                        icon: 'success',
+                    });
+    
+                    // Resetando campos após adição
+                    resetModalFields();
+                } else {
+                    Swal.fire({
+                        title: 'Erro!',
+                        text: 'Erro ao adicionar o pet: ' + (result.error || 'Erro desconhecido'),
+                        icon: 'error',
+                    });
+                }
+            } else {
+                // Atualizando pet existente
+                const result = await api.updatePet(modalId, data);
+                if (result && result.error === '') {
+                    Swal.fire({
+                        title: 'Pet Atualizado!',
+                        text: 'As informações do pet foram atualizadas com sucesso.',
+                        icon: 'success',
+                    });
+    
+                    // Atualizando a lista de pets
+                    setList((prevList) =>
+                        prevList.map((item) =>
+                            item.id === modalId
+                                ? { ...item, ...data }  // Atualize os dados com os novos valores
+                                : item
+                        )
+                    );
+                } else {
+                    Swal.fire({
+                        title: 'Erro!',
+                        text: 'Erro ao atualizar o pet: ' + (result.error || 'Erro desconhecido'),
+                        icon: 'error',
+                    });
+                }
+            }
+        } catch (error) {
+            Swal.fire({
+                title: 'Erro na Comunicação',
+                text: 'Erro ao comunicar com a API: ' + error.message,
+                icon: 'error',
+            });
+        } finally {
+            setModalLoading(false);
+            setShowModal(false);
+        }
+    };    
+    
+    const resetModalFields = () => {
+        setModalId('');
+        setModalNomePetField('');
+        setModalDataPetField('');
+        setModalRacaField('');
+        setModalSexoField('');
+        setModalEspecieField('');
+        setModalPorteField('');
+        setModalCondicoesField('');
+        setModalTratamentosField('');
+        setModalClienteField('');
     };
-
+        
 
     const handleRemoveButton = async (id) => {
         console.log('ID para remoção:', id);
@@ -241,7 +252,18 @@ export default () => {
             return;
         }
     
-        if (window.confirm('Tem certeza que deseja excluir?')) {
+        // Mensagem de confirmação com SweetAlert2
+        const resultConfirm = await Swal.fire({
+            title: 'Tem certeza?',
+            text: "Você não poderá reverter essa ação!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        });
+    
+        if (resultConfirm.isConfirmed) {
             try {
                 const result = await api.removePet(id); 
                 console.log('Resultado da remoção:', result);
@@ -250,16 +272,30 @@ export default () => {
                     setList((prevList) =>
                         prevList.filter((pet) => pet.id !== id)
                     );
-                    console.log('Pet removido com sucesso');
+                    // Exibir mensagem de sucesso
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Remoção bem-sucedida!',
+                        text: 'O pet foi removido com sucesso.',
+                    });
                 } else {
-                    alert('Erro ao remover o cliente: ' + (result.error || 'Desconhecido'));
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro ao remover!',
+                        text: result.error || 'Ocorreu um erro ao tentar remover o pet.',
+                    });
                 }
             } catch (error) {
                 console.error('Erro ao comunicar com a API:', error); 
-                alert('Erro ao comunicar com a API: ' + error.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro ao comunicar com a API',
+                    text: 'Ocorreu um erro ao tentar comunicar com a API: ' + error.message,
+                });
             }
         }
     };
+    
     
     
 
@@ -332,7 +368,6 @@ export default () => {
                                     </thead>
                                     <tbody>
                                         {list.map((item) => {
-                                            // Obter o nome da raça e do cliente
                                             const racaNome = racas.find(raca => raca.id === item.raca_id)?.nome || 'Desconhecida';
                                             const clienteNome = clientes.find(cliente => cliente.id === item.cliente_id)?.nome || 'Desconhecido';
 
@@ -356,7 +391,6 @@ export default () => {
                                                         );
                                                     })}
 
-                                                    {/* Botões de ações */}
                                                     <CTableDataCell>{item.actions}</CTableDataCell>
                                                 </CTableRow>
                                             );

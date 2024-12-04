@@ -37,8 +37,7 @@ const request = async (method, endpoint, params, token = null) => {
         return { error: error.message };
     }
 };
-
-
+    
 
 export default () => {
     return {
@@ -247,7 +246,37 @@ export default () => {
             let token = localStorage.getItem('token');
             let json = await request('put', `/pets/${id}`, data, token);
             return json;
-        }
+        },
+
+
+        // AGENDAMENTOS
+
+        getAgendamentos: async () => {
+            let token = localStorage.getItem('token');
+            let json = await request('get', '/agendamentos', {}, token);
+            if (json.error) {
+                return { error: json.error };
+            }
+            return { list: json.agendamentos, error: '' }; // Retorna a lista como 'list'
+        },
+
+        updateAgendamento: async (id, data) => {
+            let token = localStorage.getItem('token');
+            let json = await request('put', `/agendamentos/${id}`, data, token);
+            return json;
+        },
+        addAgendamento: async (data) => {
+            let token = localStorage.getItem('token');
+            let json = await request('post', '/agendamentos', data, token);
+            return json;
+        },
+
+        removeAgendamento: async (id) => {
+            let token = localStorage.getItem('token');
+            let json = await request('delete', `/agendamentos/${id}`, {}, token);
+            
+            return json;
+        },
         
         
     }

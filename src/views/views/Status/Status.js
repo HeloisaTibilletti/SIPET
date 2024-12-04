@@ -5,11 +5,11 @@ import CIcon from '@coreui/icons-react';
 import { cilCheck, cilPlus, cilTrash, cilPencil } from '@coreui/icons';
 import './Status.css';
 import PDFButton from '../../PDFButton';
- // Importe o componente PDFButton
+// Importe o componente PDFButton
 
 export default () => {
     const api = useApi();
-    
+
     const [loading, setLoading] = useState(true);
     const [list, setList] = useState([]);
     const [error, setError] = useState(null);
@@ -21,7 +21,7 @@ export default () => {
     const [sortDirection, setSortDirection] = useState('asc'); // 'asc' para ascendente, 'desc' para descendente    
 
     const fields = [
-        {label: 'Nome', key: 'nome'}
+        { label: 'Nome', key: 'nome' }
     ];
 
     useEffect(() => {
@@ -34,14 +34,14 @@ export default () => {
                             ...i,
                             actions: (
                                 <div>
-                                     <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(i)}>
-                                    <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
-                                    Editar
-                                </CButton>
-                                <CButton color="danger" onClick={() => handleRemoveButton(i.id)}>
-                                    <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
-                                    Excluir
-                                </CButton>
+                                    <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: '#d995af' }} onClick={() => handleEditButton(i)}>
+                                        <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
+                                        Editar
+                                    </CButton>
+                                    <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: 'grey' }} onClick={() => handleRemoveButton(i.id)}>
+                                        <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
+                                        Excluir
+                                    </CButton>
                                 </div>
                             ),
                         }))
@@ -78,7 +78,7 @@ export default () => {
         setSortKey(key);
         sortList(key, newDirection);
     };
-    
+
     const handleEditButton = (item) => {
         if (item && item.id && item.nome) {
             setModalId(item.id);
@@ -92,7 +92,7 @@ export default () => {
     const handleModalSave = async () => {
         if (modalTitleField) {
             setModalLoading(true);
-            
+
             let result;
             let data = {
                 nome: modalTitleField
@@ -108,8 +108,14 @@ export default () => {
                             nome: result.data.nome, // Nome retornado pela API
                             actions: (
                                 <div>
-                                    <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(result.data)}>Editar</CButton>
-                                    <CButton color="danger" onClick={() => handleRemoveButton(result.data.id)}>Excluir</CButton>
+                                    <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: '#d995af' }} onClick={() => handleEditButton(i)}>
+                                    <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
+                                    Editar
+                                </CButton>
+                                <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: 'grey' }} onClick={() => handleRemoveButton(i.id)}>
+                                    <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
+                                    Excluir
+                                </CButton>
                                 </div>
                             ),
                         };
@@ -144,15 +150,15 @@ export default () => {
             alert('Preencha o campo nome');
         }
     };
-    
+
     const handleRemoveButton = async (id) => {
         console.log('ID para remoção:', id);  // Adicione esta linha para verificar o ID
-    
+
         if (!id) {
             console.error('ID não fornecido para remoção.');
             return;
         }
-    
+
         if (window.confirm('Tem certeza que deseja excluir?')) {
             try {
                 const result = await api.removeStatus(String(id));  // Certifique-se de passar o ID como string
@@ -160,7 +166,7 @@ export default () => {
                     setList((prevList) =>
                         prevList.filter((status) => status.id !== id)
                     );
-                    
+
                 } else {
                     alert('Erro ao remover o status: ' + result.error);
                 }
@@ -174,79 +180,79 @@ export default () => {
         setModalId('');
         setModalTitleField('');
         setShowModal(true);
-        
+
     }
 
     return (
         <>
-        <CRow>
-            <CCol>
-                <h2>Consulta de Status</h2>
+            <CRow>
+                <CCol>
+                    <h2>Consulta de Status</h2>
 
-                <CCard>
-                    <CCardHeader>
-                        <CButton onClick={handleNewButton} style={{
-                            backgroundColor: '#d995af',
-                            color: 'white',
-                            border: 'none'
-                        }}>
-                            <CIcon icon={cilPlus} /> Novo Status
-                        </CButton>
-                        {/* Adicionando o botão PDF */}
-                    </CCardHeader>
-                    <CCardBody>
-                        {loading && <p>Loading...</p>}
-                        {error && <p>{error}</p>}
-                        {!loading && !error && (
-                            <CTable id='table-to-pdf' striped hover>
-                                <thead>
-                                    <tr>
-                                        {fields.map((field, index) => (
-                                            <CTableHeaderCell key={index} onClick={() => handleSort(field.key)}>
-                                                {field.label} {sortKey === field.key && (sortDirection === 'asc' ? '↑' : '↓')}
-                                            </CTableHeaderCell>
-                                        ))}
-                                        <CTableHeaderCell>Ações</CTableHeaderCell>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                    {list.map((item, index) => (
-                                        <CTableRow key={item.id}>
+                    <CCard>
+                        <CCardHeader>
+                            <CButton onClick={handleNewButton} style={{
+                                backgroundColor: '#d995af',
+                                color: 'white',
+                                border: 'none'
+                            }}>
+                                <CIcon icon={cilPlus} /> Novo Status
+                            </CButton>
+                            {/* Adicionando o botão PDF */}
+                        </CCardHeader>
+                        <CCardBody>
+                            {loading && <p>Loading...</p>}
+                            {error && <p>{error}</p>}
+                            {!loading && !error && (
+                                <CTable id='table-to-pdf' striped hover>
+                                    <thead>
+                                        <tr>
                                             {fields.map((field, index) => (
-                                                <CTableDataCell key={index}>{item[field.key]}</CTableDataCell>
+                                                <CTableHeaderCell key={index} onClick={() => handleSort(field.key)}>
+                                                    {field.label} {sortKey === field.key && (sortDirection === 'asc' ? '↑' : '↓')}
+                                                </CTableHeaderCell>
                                             ))}
-                                            <CTableDataCell>{item.actions}</CTableDataCell>
-                                        </CTableRow>
-                                    ))}
-                                </tbody>
-                            </CTable>
-                        )}
-                    </CCardBody>
-                </CCard>
-            </CCol>
-        </CRow>
+                                            <CTableHeaderCell>Ações</CTableHeaderCell>
+                                        </tr>
+                                    </thead>
 
-        <CModal visible={showModal} onClose={handleCloseModal} className="custom-modal">
-            <CModalHeader closeButton className='modal-header'>{modalId==='' ? 'Novo' : 'Editar'} Status</CModalHeader>
+                                    <tbody>
+                                        {list.map((item, index) => (
+                                            <CTableRow key={item.id}>
+                                                {fields.map((field, index) => (
+                                                    <CTableDataCell key={index}>{item[field.key]}</CTableDataCell>
+                                                ))}
+                                                <CTableDataCell>{item.actions}</CTableDataCell>
+                                            </CTableRow>
+                                        ))}
+                                    </tbody>
+                                </CTable>
+                            )}
+                        </CCardBody>
+                    </CCard>
+                </CCol>
+            </CRow>
 
-            <CModalBody>
-                <CForm>
-                    <CFormLabel htmlFor="modal-title" className='label-form'>Nome</CFormLabel>
-                    <CFormInput
-                        type="text"
-                        id="modal-title"
-                        placeholder="Digite o novo nome do Status"
-                        value={modalTitleField}
-                        onChange={e => setModalTitleField(e.target.value)}
-                    />
-                </CForm>
-            </CModalBody>
-            <CModalFooter>
-                <CButton style={{backgroundColor: '#d995af', color: 'white'}} onClick={handleModalSave} disabled={modalLoading}>{modalLoading ? 'Carregando' : 'Salvar'}</CButton>
-                <CButton color="secondary" onClick={handleCloseModal}>Cancelar</CButton>
-            </CModalFooter>
-        </CModal>
+            <CModal visible={showModal} onClose={handleCloseModal} className="custom-modal">
+                <CModalHeader closeButton className='modal-header'>{modalId === '' ? 'Novo' : 'Editar'} Status</CModalHeader>
+
+                <CModalBody>
+                    <CForm>
+                        <CFormLabel htmlFor="modal-title" className='label-form'>Nome</CFormLabel>
+                        <CFormInput
+                            type="text"
+                            id="modal-title"
+                            placeholder="Digite o novo nome do Status"
+                            value={modalTitleField}
+                            onChange={e => setModalTitleField(e.target.value)}
+                        />
+                    </CForm>
+                </CModalBody>
+                <CModalFooter>
+                    <CButton style={{ backgroundColor: '#d995af', color: 'white' }} onClick={handleModalSave} disabled={modalLoading}>{modalLoading ? 'Carregando' : 'Salvar'}</CButton>
+                    <CButton color="secondary" onClick={handleCloseModal}>Cancelar</CButton>
+                </CModalFooter>
+            </CModal>
 
         </>
     );

@@ -35,11 +35,11 @@ export default () => {
                             ...i,
                             actions: (
                                 <div>
-                                     <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(i)}>
+                                     <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: '#d995af' }} onClick={() => handleEditButton(i)}>
                                     <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
                                     Editar
                                 </CButton>
-                                <CButton color="danger" onClick={() => handleRemoveButton(i.id)}>
+                                <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: 'grey' }} onClick={() => handleRemoveButton(i.id)}>
                                     <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
                                     Excluir
                                 </CButton>
@@ -107,8 +107,14 @@ export default () => {
                             valor: result.data.valor,
                             actions: (
                                 <div>
-                                    <CButton color="info" style={{ marginRight: '10px' }} onClick={() => handleEditButton(result.data)}>Editar</CButton>
-                                    <CButton color="danger" onClick={() => handleRemoveButton(result.data.id)}>Excluir</CButton>
+                                    <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: '#d995af' }} onClick={() => handleEditButton(i)}>
+                                    <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
+                                    Editar
+                                </CButton>
+                                <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: 'grey' }} onClick={() => handleRemoveButton(i.id)}>
+                                    <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
+                                    Excluir
+                                </CButton>
                                 </div>
                             ),
                         };

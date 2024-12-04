@@ -4,6 +4,7 @@ import { CButton, CFormTextarea, CFormCheck, CFormSelect, CSpinner, CCard, CCard
 import CIcon from '@coreui/icons-react';
 import { cilCheck } from '@coreui/icons';
 import './Agendamentos.css';
+import Swal from 'sweetalert2';
 
 export default () => {
     const api = useApi();
@@ -23,6 +24,9 @@ export default () => {
     const [produtos, setProdutos] = useState([]);
     const [produtosAdicionados, setProdutosAdicionados] = useState([]);
     const [petsDoCliente, setPetsDoCliente] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [usuarioSelecionado, setUsuarioSelecionado] = useState('');
+    const [modalUserField, setModalUserField] = useState([]);
 
 
     const fetchData = async () => {
@@ -31,6 +35,7 @@ export default () => {
             const response2 = await api.getStatus();
             const response3 = await api.getPet();
             const response4 = await api.getProdutos();
+            const response5 = await api.getUsers();
 
 
             if (response && response2 && response3 && response.list) {
@@ -38,6 +43,7 @@ export default () => {
                 setStatus(response2.list);
                 setPets(response3.list);
                 setProdutos(response4.list);
+                setUsers(response5.list);
             } else {
                 console.log('Erro ao carregar os dados. Resposta inesperada');
             }
@@ -59,24 +65,28 @@ export default () => {
 
 
     const handleCheckboxChange = (produto) => {
-        if (produtosAdicionados.some(p => p.id === produto.id)) {
-            const novosProdutos = produtosAdicionados.filter(p => p.id !== produto.id);
-            setProdutosAdicionados(novosProdutos);
+        const isProdutoAdicionado = produtosAdicionados.includes(produto.id);
+
+        if (isProdutoAdicionado) {
+            setProdutosAdicionados(produtosAdicionados.filter(id => id !== produto.id));
             setValorTotal(valorTotal - parseFloat(produto.valor));
         } else {
-            setProdutosAdicionados([...produtosAdicionados, produto]);
+            setProdutosAdicionados([...produtosAdicionados, produto.id]);
             setValorTotal(valorTotal + parseFloat(produto.valor));
         }
     };
 
+
     const handleTransporteChange = (e) => {
         setModalTransporteField(e.target.checked);
+        const transporteCusto = 15;
         if (e.target.checked) {
-            setValorTotal(valorTotal + 15);
+            setValorTotal(valorTotal + transporteCusto);
         } else {
-            setValorTotal(valorTotal - 15);
+            setValorTotal(valorTotal - transporteCusto);
         }
     };
+
 
     const handleSave = async () => {
         if (!modalClienteField || !modalPetField || !modalDataField || !modalStatusField) {
@@ -86,31 +96,70 @@ export default () => {
 
         setLoading(true);
 
-        let data = {
+        const data = {
             id_cliente: modalClienteField,
             id_pet: modalPetField,
             id_status: modalStatusField,
+            id_user: usuarioSelecionado,
             data_reserva: modalDataField,
             horario_reserva: modalHorarioField,
             observacoes: modalObservacoesField,
             transporte: modalTransporteField,
-            valorTotal: valorTotal,
-            produtos: produtosAdicionados.map(p => p.id)
+            valor_total: Number(valorTotal.toFixed(2)),
+            id_produto: produtosAdicionados,
         };
+
+        console.log('Payload enviado para o back-end:', data);
 
         try {
             const result = await api.addAgendamento(data);
             if (result.error === '') {
-                alert('Agendamento salvo com sucesso!');
+                Swal.fire({
+                    title: 'Agendamento Salvo!',
+                    text: 'Seu agendamento foi salvo com sucesso.',
+                    icon: 'success', // Ícone de sucesso
+                    showConfirmButton: false, // Remove o botão de confirmação
+                    timer: 3000, // Fecha automaticamente após 3 segundos
+                    background: '#f4f6f9', // Fundo claro
+                    backdrop: `
+                    rgba(0, 0, 0, 0.4)
+                    url("https://i.gifer.com/7efs.gif") // GIF animado no fundo
+                    left top
+                    no-repeat
+                `,
+                });
+
+                setModalClienteField('');
+                setModalPetField('');
+                setModalStatusField('');
+                setModalDataField('');
+                setModalHorarioField(new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
+                setModalObservacoesField('');
+                setModalTransporteField(false);
+                setValorTotal(0);
+                setProdutosAdicionados([]);
+                setUsuarioSelecionado('');
+                setPetsDoCliente([]);
             } else {
-                alert('Erro ao salvar agendamento: ' + result.error);
+                Swal.fire({
+                    title: 'Erro!',
+                    text: 'Erro ao salvar o agendamento: ' + result.error,
+                    icon: 'error',
+                    confirmButtonText: 'Ok',
+                });
             }
         } catch (error) {
-            alert('Erro ao comunicar com a API: ' + error.message);
+            Swal.fire({
+                title: 'Erro na Comunicação',
+                text: 'Erro ao comunicar com a API: ' + error.message,
+                icon: 'error',
+                confirmButtonText: 'Ok',
+            });
         } finally {
             setLoading(false);
         }
     };
+
 
     return (
         <CRow>
@@ -226,8 +275,8 @@ export default () => {
                                                         type="checkbox"
                                                         id={`produto-${produto.id}`}
                                                         label={`${produto.nome} - R$ ${produto.valor}`}
-                                                        onChange={() => handleCheckboxChange(produto)}
-                                                        checked={produtosAdicionados.some(p => p.id === produto.id)}
+                                                        onChange={() => handleCheckboxChange(produto)}  // Passa o produto para o handler
+                                                        checked={produtosAdicionados.includes(produto.id)}  // Marca a checkbox se o ID estiver em produtosAdicionados
                                                         className="checkbox-input"
                                                     />
                                                 </div>
@@ -235,7 +284,31 @@ export default () => {
                                         ) : (
                                             <p className="loading-produtos">Carregando produtos...</p>
                                         )}
+
                                     </div>
+                                </div>
+
+                                <div>
+                                    <CFormLabel htmlFor="modal-usuario" className="label-form">
+                                        Funcionário *
+                                    </CFormLabel>
+                                    <CFormSelect
+                                        id="modal-usuario"
+                                        value={usuarioSelecionado}
+                                        onChange={(e) => setUsuarioSelecionado(e.target.value)}
+                                        className="input-field"
+                                    >
+                                        <option value="">Selecione o funcionário</option>
+                                        {users.length > 0 ? (
+                                            users.map((users) => (
+                                                <option key={users.id} value={users.id}>
+                                                    {users.nome}
+                                                </option>
+                                            ))
+                                        ) : (
+                                            <option disabled>Carregando funcionários...</option>
+                                        )}
+                                    </CFormSelect>
                                 </div>
 
                                 <CFormLabel htmlFor="modal-observacoes" className="label-form">Observações</CFormLabel>

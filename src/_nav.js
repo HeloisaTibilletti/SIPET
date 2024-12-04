@@ -40,15 +40,15 @@ const _nav = [
 
   {
     component: CNavItem,
-    name: 'Agendamentos',
-    to: '/agendamentos',
+    name: 'Novo Agendamento',
+    to: '/novoagendamento',
     icon: <CIcon icon={cilAddressBook} customClassName="nav-icon" />,
   },
 
   {
     component: CNavItem,
-    name: 'Consultar',
-    to: '/old_schedules',
+    name: 'Consulta',
+    to: '/consulta',
     icon: <CIcon icon={cilMagnifyingGlass} customClassName="nav-icon" />,
   },
   
@@ -74,7 +74,7 @@ const _nav = [
 
   {
     component: CNavItem,
-    name: 'Usuários',
+    name: 'Usuários / Funcionários',
     to: '/users',
     icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
   },
