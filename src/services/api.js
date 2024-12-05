@@ -277,6 +277,15 @@ export default () => {
             
             return json;
         },
+
+        getProdutosPorAgendamento: async (id) => {
+            let token = localStorage.getItem('token');
+            let json = await request('get', `/agendamentos/{id}/produtos`, {}, token);
+            
+            return json;
+        },
+
+
         
         
     }

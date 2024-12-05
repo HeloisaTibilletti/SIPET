@@ -1,0 +1,72 @@
+/* Cabeçalho personalizado do modal */
+.modal-header-custom {
+    background-color: #4e73df;
+    /* Azul suave */
+    color: white;
+    font-size: 1.25rem;
+    font-weight: bold;
+    padding: 2rem;
+    border-radius: 0.3rem 0.3rem 0 0;
+}
+
+/* Corpo do modal */
+.modal-body-custom {
+    padding: 1.5rem;
+    font-size: 1rem;
+    line-height: 1.6;
+    background-color: #f8f9fc;
+    /* Cinza claro */
+    border-radius: 0 0 0.3rem 0.3rem;
+}
+
+/* Botão estilo link - Remover o tracejado */
+.pet-link {
+    background: none;
+    border: none;
+    color: #4e73df;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    /* Remover o underline */
+}
+
+.pet-link:hover {
+    color: #2e59d9;
+    /* Azul mais escuro no hover */
+}
+
+/* Botão estilo link - Cliente */
+.cliente-link {
+    background: none;
+    border: none;
+    color: #4e73df;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    /* Remover o underline */
+}
+
+.cliente-link:hover {
+    color: #2e59d9;
+    /* Azul mais escuro no hover */
+}
+
+
+/* Rodapé do modal */
+.modal-footer {
+    border-top: 1px solid #e3e6f0;
+    padding-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Botão padrão */
+button {
+    font-size: 1rem;
+    border-radius: 0.3rem;
+}
+
+/* Ajuste para alinhamento */
+.modal-body p {
+    margin-bottom: 0.75rem;
+}

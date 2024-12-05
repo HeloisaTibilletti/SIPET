@@ -1,50 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
+import { useState, useEffect } from 'react';
+import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-// Defina o localizer com o moment.js
-const localizer = momentLocalizer(moment);
+// Configurar o calendário com o timezone de sua preferência
+BigCalendar.momentLocalizer(moment);
 
 const Calendario = () => {
-  const [agendamentos, setAgendamentos] = useState([]);
-
-  // Função para buscar agendamentos do banco de dados
-  const fetchAgendamentos = async () => {
-    try {
-      const response = await fetch('/api/agendamentos');
-      const data = await response.json();
-      setAgendamentos(data); // Supondo que a resposta seja uma lista de agendamentos
-    } catch (error) {
-      console.error('Erro ao buscar agendamentos:', error);
-    }
-  };
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    fetchAgendamentos();
+    fetch('http://localhost:8000/api/agendamentos')
+      .then(response => response.json())
+      .then(data => {
+        console.log(data); // Verifique a resposta
+        // Verifique a estrutura e formate as datas corretamente
+        const eventosFormatados = data.agendamentos.map(evento => ({
+          ...evento,
+          start: moment(evento.start).toDate(),  // Convertendo as datas
+          end: moment(evento.end).toDate(),
+          title: evento.title || 'Evento' // Fallback para título, caso não exista
+        }));
+        setEvents(eventosFormatados); // Atualize o estado com os eventos
+      })
+      .catch(error => console.error('Erro ao buscar eventos:', error));
   }, []);
 
-  // Função para formatar os agendamentos no formato necessário pelo BigCalendar
-  const formatEventos = () => {
-    return agendamentos.map(agendamento => ({
-      title: agendamento.titulo, // O título do evento
-      start: new Date(agendamento.data_inicio), // Formatação do horário de início
-      end: new Date(agendamento.data_fim), // Formatação do horário de término
-      allDay: false, // Defina se o evento é o dia inteiro ou não
-    }));
-  };
-
   return (
-    <div>
-      <h2>Calendário de Agendamentos</h2>
-      <Calendar
-        localizer={localizer}
-        events={formatEventos()}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: 500 }}
-      />
-    </div>
+    <BigCalendar
+      events={events} 
+      startAccessor="start" 
+      endAccessor="end"
+      titleAccessor="title"
+      style={{ height: '100vh' }} // Para ajustar a altura do calendário
+    />
   );
 };
 

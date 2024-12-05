@@ -14,7 +14,7 @@ const Consulta = React.lazy(() => import('./views/views/Consulta/Consulta'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
-  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
+  { path: '/dashboard', name: 'Calendário', element: Dashboard },
   { path: '/logout', name: 'Logout', element: Logout },
   { path: '/racas', name: 'Racas', element: Racas },
   { path: '/status', name: 'Status', element: Status },
