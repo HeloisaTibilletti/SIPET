@@ -278,15 +278,11 @@ export default () => {
             return json;
         },
 
-        getProdutosPorAgendamento: async (id) => {
-            let token = localStorage.getItem('token');
-            let json = await request('get', `/agendamentos/{id}/produtos`, {}, token);
-            
-            return json;
+        getProdutosPorAgendamento: async (agendamentoId) => {
+            let token = localStorage.getItem('token'); // Recupera o token
+            let json = await request('get', `/agendamentos/${agendamentoId}`, {}, token); 
+            return json.produtos || []; 
         },
-
-
-        
-        
+            
     }
 }

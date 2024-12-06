@@ -12,7 +12,8 @@ import {
   cilCalendarCheck,
   cilUser,
   cilAccountLogout,
-  cilPeople
+  cilPeople,
+  cilTag
 } from '@coreui/icons'
 import { CNavItem, CNavTitle } from '@coreui/react'
 
@@ -31,14 +32,14 @@ const _nav = [
 
   {
     component: CNavItem,
-    name: 'Novo Agendamento',
+    name: 'Agendar ',
     to: '/novoagendamento',
     icon: <CIcon icon={cilCalendarCheck} customClassName="nav-icon" />,
   },
 
   {
     component: CNavItem,
-    name: 'Consulta',
+    name: 'Consultar ',
     to: '/consulta',
     icon: <CIcon icon={cilMagnifyingGlass} customClassName="nav-icon" />,
   },
@@ -94,7 +95,7 @@ const _nav = [
     component: CNavItem,
     name: 'Status',
     to: '/status',
-    icon: <CIcon icon={cilAvTimer} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilTag} customClassName="nav-icon" />,
   },
 
   {

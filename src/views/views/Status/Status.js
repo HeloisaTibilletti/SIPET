@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import useApi from '../../../services/api';
 import { CButton, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableHeaderCell, CTableDataCell, CTableRow, CModal, CModalHeader, CModalBody, CModalFooter, CForm, CFormLabel, CFormInput } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
-import { cilCheck, cilPlus, cilTrash, cilPencil } from '@coreui/icons';
+import { cilCheck, cilPlus, cilTrash, cilPencil, cilAudioSpectrum, cilCheckCircle, cilTag } from '@coreui/icons';
 import './Status.css';
-import PDFButton from '../../PDFButton';
-// Importe o componente PDFButton
+import Swal from 'sweetalert2';
+
 
 export default () => {
     const api = useApi();
@@ -89,6 +89,8 @@ export default () => {
         }
     }
 
+
+
     const handleModalSave = async () => {
         if (modalTitleField) {
             setModalLoading(true);
@@ -109,19 +111,35 @@ export default () => {
                             actions: (
                                 <div>
                                     <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: '#d995af' }} onClick={() => handleEditButton(i)}>
-                                    <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
-                                    Editar
-                                </CButton>
-                                <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: 'grey' }} onClick={() => handleRemoveButton(i.id)}>
-                                    <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
-                                    Excluir
-                                </CButton>
+                                        <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
+                                        Editar
+                                    </CButton>
+                                    <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: 'grey' }} onClick={() => handleRemoveButton(i.id)}>
+                                        <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
+                                        Excluir
+                                    </CButton>
                                 </div>
                             ),
                         };
                         setList((prevList) => [...prevList, newItem]);
+
+                        // Exibindo sucesso com SweetAlert
+                        Swal.fire({
+                            title: 'Sucesso!',
+                            text: 'Novo status adicionado com sucesso!',
+                            icon: 'success',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#3085d6',
+                        });
                     } else {
-                        alert('Erro ao adicionar o status: ' + (result.error || 'Dados não retornados da API'));
+                        Swal.fire({
+                            title: 'Erro!',
+                            text: 'Erro ao adicionar o status: ' + (result.error || 'Dados não retornados da API'),
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                            reverseButtons: true,
+                            confirmButtonColor: '#d33',
+                        });
                     }
                 } else {
                     // Atualizando item existente
@@ -134,12 +152,33 @@ export default () => {
                                     : item
                             )
                         );
+
+                        // Exibindo sucesso com SweetAlert
+                        Swal.fire({
+                            title: 'Atualizado!',
+                            text: 'Status atualizado com sucesso!',
+                            icon: 'success',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#3085d6',
+                        });
                     } else {
-                        alert('Erro ao atualizar o status: ' + result.error);
+                        Swal.fire({
+                            title: 'Erro!',
+                            text: 'Erro ao atualizar o status: ' + result.error,
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#d33',
+                        });
                     }
                 }
             } catch (error) {
-                alert('Erro ao comunicar com a API: ' + error.message);
+                Swal.fire({
+                    title: 'Erro!',
+                    text: 'Erro ao comunicar com a API: ' + error.message,
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#d33',
+                });
             } finally {
                 setModalLoading(false);
                 if (result && result.error === '') {
@@ -147,9 +186,16 @@ export default () => {
                 }
             }
         } else {
-            alert('Preencha o campo nome');
+            Swal.fire({
+                title: 'Campo Obrigatório!',
+                text: 'Preencha o campo nome!',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#f39c12',
+            });
         }
     };
+
 
     const handleRemoveButton = async (id) => {
         console.log('ID para remoção:', id);  // Adicione esta linha para verificar o ID
@@ -159,19 +205,54 @@ export default () => {
             return;
         }
 
-        if (window.confirm('Tem certeza que deseja excluir?')) {
+        // Usando SweetAlert para confirmar a exclusão
+        const result = await Swal.fire({
+            title: 'Tem certeza?',
+            text: 'Você não poderá reverter essa ação!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true // Inverte a posição dos botões
+        });
+
+        if (result.isConfirmed) {
             try {
-                const result = await api.removeStatus(String(id));  // Certifique-se de passar o ID como string
-                if (result.error === '') {
+                const removeResult = await api.removeStatus(String(id));  // Certifique-se de passar o ID como string
+                if (removeResult.error === '') {
                     setList((prevList) =>
                         prevList.filter((status) => status.id !== id)
                     );
 
+                    // Sucesso na exclusão
+                    Swal.fire({
+                        title: 'Excluído!',
+                        text: 'O status foi removido com sucesso.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#3085d6',
+                    });
                 } else {
-                    alert('Erro ao remover o status: ' + result.error);
+                    // Erro ao remover
+                    Swal.fire({
+                        title: 'Erro!',
+                        text: 'Erro ao remover o status: ' + removeResult.error,
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#d33',
+                    });
                 }
             } catch (error) {
-                alert('Erro ao comunicar com a API: ' + error.message);
+                // Erro ao comunicar com a API
+                Swal.fire({
+                    title: 'Erro!',
+                    text: 'Erro ao comunicar com a API: ' + error.message,
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#d33',
+                });
             }
         }
     };
@@ -187,7 +268,12 @@ export default () => {
         <>
             <CRow>
                 <CCol>
-                    <h2>Consulta de Status</h2>
+                <div style={{ textAlign: 'center' }}>
+                        <h2>
+                            <CIcon icon={cilTag} size='xl' style={{ marginRight: '10px' }} />
+                            Consulta de Status
+                        </h2>
+                    </div>
 
                     <CCard>
                         <CCardHeader>

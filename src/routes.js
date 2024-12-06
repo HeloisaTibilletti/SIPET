@@ -23,7 +23,8 @@ const routes = [
   { path: '/clientes', name: 'Clientes', element: Clientes },
   { path: '/pets', name: 'Pets', element: Pets },
   { path: '/novoagendamento', name: 'Novo Agendamento', element: NovoAgendamento },
-  { path: '/consulta', name: 'Consulta', element: Consulta },
+  { path: '/consulta', name: 'Consultar Agendamentos', element: Consulta },
+  
   
 ];
 

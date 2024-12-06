@@ -2,16 +2,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    margin: auto; /* Garante centralização no CoreUI */
+    height: auto; /* Permite que o modal se ajuste ao conteúdo */
+    max-width: 600px; /* Define a largura máxima */
 }
 
 .custom-modal .modal-content {
-    width: 100%;
-    max-width: 600px; /* Ajuste a largura máxima do modal conforme necessário */
+    width: 100%; /* O modal preenche todo o container */
+    max-width: 600px; /* Limita a largura */
+    margin: 0 auto; /* Centraliza horizontalmente */
+    border-radius: 8px; /* Ajuste opcional para bordas arredondadas */
 }
 
 .modal-header {
     font-weight: bold;
+    text-align: center; /* Centraliza o título */
 }
 
 .label-form {

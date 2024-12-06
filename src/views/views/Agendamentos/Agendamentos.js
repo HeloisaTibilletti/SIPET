@@ -66,24 +66,20 @@ export default () => {
 
     const handleCheckboxChange = (produto) => {
         const isProdutoAdicionado = produtosAdicionados.some(p => p.id === produto.id);
-    
+
         if (isProdutoAdicionado) {
-            // Remove o produto da lista
             setProdutosAdicionados(produtosAdicionados.filter(p => p.id !== produto.id));
-            // Subtrai o valor do produto removido do valor total
             setValorTotal(valorTotal - parseFloat(produto.valor));
         } else {
-            // Adiciona o produto com id, nome e valor
             setProdutosAdicionados([
                 ...produtosAdicionados,
                 { id: produto.id, nome: produto.nome, valor: produto.valor }
             ]);
-            // Soma o valor do produto ao valor total
             setValorTotal(valorTotal + parseFloat(produto.valor));
         }
     };
-    
-    
+
+
 
 
     const handleTransporteChange = (e) => {
@@ -173,7 +169,7 @@ export default () => {
     return (
         <CRow>
             <CCol>
-                <h2 className="form-title">
+                <h2 className="form-title" style={{ textAlign: 'center' }}>
                     <CIcon icon={cilCalendar} size="xl" style={{ marginRight: "10px", fontSize: "24px" }} />
                     Cadastro de Agendamentos
                 </h2>
@@ -299,8 +295,8 @@ export default () => {
                                                     type="checkbox"
                                                     id={`produto-${produto.id}`}
                                                     label={`${produto.nome} - R$ ${produto.valor}`}
-                                                    onChange={() => handleCheckboxChange(produto)}  // Passa o produto para o handler
-                                                    checked={produtosAdicionados.includes(produto.id)}  // Marca a checkbox se o ID estiver em produtosAdicionados
+                                                    onChange={() => handleCheckboxChange(produto)} // Passa o produto para o handler
+                                                    checked={produtosAdicionados.some(p => p.id === produto.id)} // Verifica se o produto está em produtosAdicionados
                                                     className="checkbox-input"
                                                 />
                                             </div>
@@ -309,6 +305,7 @@ export default () => {
                                         <p className="loading-produtos">Carregando produtos...</p>
                                     )}
                                 </div>
+
 
                                 <div className="label-container">
                                     <CIcon icon={cilUserFemale} size="lg" style={{ marginRight: "10px", fontSize: "20px" }} />
@@ -357,8 +354,8 @@ export default () => {
 
                                 <div className="label-container valor-total">
                                     <CIcon icon={cilCart} size="lg" style={{ marginRight: "10px", fontSize: "20px" }} />
-                                    
-                                        <strong>Total: R$ {valorTotal.toFixed(2)}</strong>  
+
+                                    <strong>Total: R$ {valorTotal.toFixed(2)}</strong>
                                 </div>
 
                                 <div className="button-container">

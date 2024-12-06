@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import useApi from '../../../services/api';
 import { CButton, CTabs, CTabContent, CFormSelect, CTabPanel, CTabList, CTab, CSpinner, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableHeaderCell, CTableDataCell, CTableRow, CModal, CModalHeader, CModalBody, CModalFooter, CForm, CFormLabel, CFormInput, CFormTextarea } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
-import { cilPlus } from '@coreui/icons';
-import { cilTrash, cilPencil } from '@coreui/icons';
+import { cilPeople, cilPlus, cilTrash, cilPencil } from '@coreui/icons';
 import './Clientes.css';
 import Swal from 'sweetalert2';
 
@@ -53,13 +52,13 @@ export default () => {
                             actions: (
                                 <div>
                                     <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: '#d995af' }} onClick={() => handleEditButton(i)}>
-                                    <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
-                                    Editar
-                                </CButton>
-                                <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: 'grey' }} onClick={() => handleRemoveButton(i.id)}>
-                                    <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
-                                    Excluir
-                                </CButton>
+                                        <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
+                                        Editar
+                                    </CButton>
+                                    <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: 'grey' }} onClick={() => handleRemoveButton(i.id)}>
+                                        <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
+                                        Excluir
+                                    </CButton>
                                 </div>
                             ),
                         }))
@@ -134,11 +133,10 @@ export default () => {
         }
     }
 
-
     const handleModalSave = async () => {
         if (modalTitleField) {
             setModalLoading(true);
-    
+
             let result;
             let data = {
                 nome: modalTitleField,
@@ -147,14 +145,14 @@ export default () => {
                 endereco: modalEnderecoField,
                 telefone: modalTelefoneField,
             };
-    
+
             try {
                 if (modalId === '') {
+                    // Se modalId está vazio, cria um novo cliente
                     result = await api.addClientes(data);
                     console.log('Resultado ao adicionar cliente:', result);
-    
+
                     if (result.error === '' && result.success) {
-    
                         const newItem = {
                             id: result.success,
                             nome: modalTitleField,
@@ -164,45 +162,41 @@ export default () => {
                             telefone: modalTelefoneField,
                             actions: (
                                 <div>
-                                    <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: '#d995af' }} onClick={() => handleEditButton(i)}>
-                                    <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
-                                    Editar
-                                </CButton>
-                                <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: 'grey' }} onClick={() => handleRemoveButton(i.id)}>
-                                    <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
-                                    Excluir
-                                </CButton>
+                                    <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: '#d995af' }} onClick={() => handleEditButton(result.success)}>
+                                        <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
+                                        Editar
+                                    </CButton>
+                                    <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: 'grey' }} onClick={() => handleRemoveButton(result.success)}>
+                                        <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
+                                        Excluir
+                                    </CButton>
                                 </div>
                             ),
                         };
-    
-                        // Adiciona o cliente à lista
+
                         setList((prevList) => [...prevList, newItem]);
-    
-                        // Exibe a mensagem de sucesso com ícone
+
                         Swal.fire({
                             title: 'Cliente Adicionado!',
                             text: 'O cliente foi adicionado com sucesso!',
-                            icon: 'success',  // Ícone de sucesso
+                            icon: 'success',
                             confirmButtonText: 'OK',
                             confirmButtonColor: '#3085d6',
                         });
-    
                     } else {
-                        // Erro ao adicionar cliente
                         Swal.fire({
                             title: 'Erro!',
                             text: 'Erro ao adicionar o cliente: ' + (result.error || 'Dados não retornados da API'),
-                            icon: 'error',  // Ícone de erro
+                            icon: 'error',
                             confirmButtonText: 'OK',
                             confirmButtonColor: '#d33',
                         });
                     }
                 } else {
-                    // Atualizando cliente existente
+                    // Se modalId não está vazio, realiza a atualização
                     result = await api.updateClientes(modalId, data);
                     console.log('Resultado ao atualizar cliente:', result);
-    
+
                     if (result.error === '') {
                         setList((prevList) =>
                             prevList.map((item) =>
@@ -216,21 +210,19 @@ export default () => {
                                     : item
                             )
                         );
-    
-                        // Exibe a mensagem de sucesso com ícone
+
                         Swal.fire({
                             title: 'Cliente Atualizado!',
                             text: 'As informações do cliente foram atualizadas.',
-                            icon: 'success',  // Ícone de sucesso
+                            icon: 'success',
                             confirmButtonText: 'OK',
                             confirmButtonColor: '#3085d6',
                         });
                     } else {
-                        // Erro ao atualizar cliente
                         Swal.fire({
                             title: 'Erro!',
                             text: 'Erro ao atualizar o cliente: ' + result.error,
-                            icon: 'error',  // Ícone de erro
+                            icon: 'error',
                             confirmButtonText: 'OK',
                             confirmButtonColor: '#d33',
                         });
@@ -240,7 +232,7 @@ export default () => {
                 Swal.fire({
                     title: 'Erro!',
                     text: 'Erro ao comunicar com a API: ' + error.message,
-                    icon: 'error',  // Ícone de erro
+                    icon: 'error',
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#d33',
                 });
@@ -254,14 +246,15 @@ export default () => {
             Swal.fire({
                 title: 'Campos Incompletos!',
                 text: 'Preencha todos os campos obrigatórios.',
-                icon: 'warning',  // Ícone de aviso
+                icon: 'warning',
                 confirmButtonText: 'OK',
                 confirmButtonColor: '#f39c12',
             });
         }
     };
-    
-    
+
+
+
     const handleRemoveButton = async (id) => {
         console.log('ID para remoção:', id);
 
@@ -270,19 +263,56 @@ export default () => {
             return;
         }
 
-        if (window.confirm('Tem certeza que deseja excluir?')) {
+        // Usando SweetAlert para confirmar a exclusão
+        const result = await Swal.fire({
+            title: 'Tem certeza?',
+            text: 'Você não poderá reverter essa ação!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+
+        });
+
+        if (result.isConfirmed) {
             try {
-                const result = await api.removeClientes(String(id));
-                if (result.error === '') {
+                const removeResult = await api.removeClientes(String(id));
+                if (removeResult.error === '') {
                     setList((prevList) =>
                         prevList.filter((cliente) => cliente.id !== id)
                     );
 
+                    // Sucesso na exclusão
+                    Swal.fire({
+                        title: 'Excluído!',
+                        text: 'O cliente foi removido com sucesso.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#3085d6',
+
+                    });
                 } else {
-                    alert('Erro ao remover o cliente: ' + result.error);
+                    // Erro ao remover
+                    Swal.fire({
+                        title: 'Erro!',
+                        text: 'Erro ao remover o cliente: ' + removeResult.error,
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#d33',
+                    });
                 }
             } catch (error) {
-                alert('Erro ao comunicar com a API: ' + error.message);
+                // Erro ao comunicar com a API
+                Swal.fire({
+                    title: 'Erro!',
+                    text: 'Erro ao comunicar com a API: ' + error.message,
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#d33',
+                });
             }
         }
     };
@@ -302,7 +332,12 @@ export default () => {
         <>
             <CRow>
                 <CCol>
-                    <h2>Consulta de Clientes</h2>
+                    <div style={{ textAlign: 'center' }}>
+                        <h2>
+                            <CIcon icon={cilPeople} size='xl' style={{ marginRight: '10px' }} />
+                            Consulta de Clientes
+                        </h2>
+                    </div>
 
                     <CCard>
                         <CCardHeader>

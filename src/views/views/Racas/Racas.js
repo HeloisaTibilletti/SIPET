@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import useApi from '../../../services/api';
 import { CButton, CSpinner, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableHeaderCell, CTableDataCell, CTableRow, CModal, CModalHeader, CModalBody, CModalFooter, CForm, CFormLabel, CFormInput } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
-import { cilCheck, cilPlus, cilTrash, cilPencil } from '@coreui/icons';
+import { cilAnimal, cilPlus, cilTrash, cilPencil } from '@coreui/icons';
 import './Racas.css';
-import PDFButton from '../../PDFButton';
+import Swal from 'sweetalert2';
 
 export default () => {
     const api = useApi();
@@ -34,13 +34,13 @@ export default () => {
                             actions: (
                                 <div>
                                     <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: '#d995af' }} onClick={() => handleEditButton(i)}>
-                                    <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
-                                    Editar
-                                </CButton>
-                                <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: 'grey' }} onClick={() => handleRemoveButton(i.id)}>
-                                    <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
-                                    Excluir
-                                </CButton>
+                                        <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
+                                        Editar
+                                    </CButton>
+                                    <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: 'grey' }} onClick={() => handleRemoveButton(i.id)}>
+                                        <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
+                                        Excluir
+                                    </CButton>
                                 </div>
                             ),
                         }))
@@ -108,19 +108,29 @@ export default () => {
                             actions: (
                                 <div>
                                     <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: '#d995af' }} onClick={() => handleEditButton(i)}>
-                                    <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
-                                    Editar
-                                </CButton>
-                                <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: 'grey' }} onClick={() => handleRemoveButton(i.id)}>
-                                    <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
-                                    Excluir
-                                </CButton>
+                                        <CIcon icon={cilPencil} style={{ marginRight: '5px' }} />
+                                        Editar
+                                    </CButton>
+                                    <CButton style={{ marginRight: '10px', color: 'white', backgroundColor: 'grey' }} onClick={() => handleRemoveButton(i.id)}>
+                                        <CIcon icon={cilTrash} style={{ marginRight: '5px' }} />
+                                        Excluir
+                                    </CButton>
                                 </div>
                             ),
                         };
                         setList((prevList) => [...prevList, newItem]);
+                        // Exibe o sucesso após adicionar
+                        Swal.fire(
+                            'Adicionado!',
+                            'A raça foi adicionada com sucesso.',
+                            'success'
+                        );
                     } else {
-                        alert('Erro ao adicionar a raça: ' + (result.error || 'Dados não retornados da API'));
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro',
+                            text: 'Erro ao adicionar a raça: ' + (result.error || 'Dados não retornados da API')
+                        });
                     }
                 } else {
                     // Atualizando item existente
@@ -133,12 +143,26 @@ export default () => {
                                     : item
                             )
                         );
+                        // Exibe o sucesso após atualização
+                        Swal.fire(
+                            'Atualizado!',
+                            'A raça foi atualizada com sucesso.',
+                            'success'
+                        );
                     } else {
-                        alert('Erro ao atualizar a raça: ' + result.error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro',
+                            text: 'Erro ao atualizar a raça: ' + result.error
+                        });
                     }
                 }
             } catch (error) {
-                alert('Erro ao comunicar com a API: ' + error.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro de comunicação',
+                    text: 'Erro ao comunicar com a API: ' + error.message
+                });
             } finally {
                 setModalLoading(false);
                 if (result && result.error === '') {
@@ -146,34 +170,67 @@ export default () => {
                 }
             }
         } else {
-            alert('Preencha o campo nome');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atenção',
+                text: 'Preencha o campo nome'
+            });
         }
     };
 
     const handleRemoveButton = async (id) => {
-        console.log('ID para remoção:', id);  // Adicione esta linha para verificar o ID
+        console.log('ID para remoção:', id);
 
         if (!id) {
             console.error('ID não fornecido para remoção.');
             return;
         }
 
-        if (window.confirm('Tem certeza que deseja excluir?')) {
+        // Exibe o SweetAlert2 de confirmação
+        const result = await Swal.fire({
+            title: 'Tem certeza?',
+            text: "Você não poderá reverter isso!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true,
+        });
+
+        if (result.isConfirmed) {
             try {
-                const result = await api.removeRaca(String(id));  // Certifique-se de passar o ID como string
+                const result = await api.removeRaca(String(id));
                 if (result.error === '') {
                     setList((prevList) =>
                         prevList.filter((raca) => raca.id !== id)
                     );
-
+                    // Exibe um SweetAlert2 de sucesso após a remoção
+                    Swal.fire(
+                        'Removido!',
+                        'A raça foi removida com sucesso.',
+                        'success'
+                    );
                 } else {
-                    alert('Erro ao remover a raça: ' + result.error);
+                    // Exibe um SweetAlert2 de erro se ocorrer um problema na remoção
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro',
+                        text: 'Erro ao remover a raça: ' + result.error
+                    });
                 }
             } catch (error) {
-                alert('Erro ao comunicar com a API: ' + error.message);
+                // Exibe um SweetAlert2 de erro em caso de falha na comunicação com a API
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro de comunicação',
+                    text: 'Erro ao comunicar com a API: ' + error.message
+                });
             }
         }
     };
+
 
     const handleNewButton = () => {
         setModalId('');
@@ -185,7 +242,12 @@ export default () => {
         <>
             <CRow>
                 <CCol>
-                    <h2>Consulta de Raças</h2>
+                <div style={{ textAlign: 'center' }}>
+                        <h2>
+                            <CIcon icon={cilAnimal} size='xl' style={{ marginRight: '10px' }} />
+                            Consulta de Raças
+                        </h2>
+                    </div>
 
                     <CCard>
                         <CCardHeader>
@@ -206,7 +268,7 @@ export default () => {
                             )}
                             {error && <p>{error}</p>}
                             {!loading && !error && (
-                                <CTable id='table-to-pdf'striped hover>
+                                <CTable id='table-to-pdf' striped hover>
                                     <thead>
                                         <tr>
                                             {fields.map((field, index) => (
@@ -236,7 +298,7 @@ export default () => {
             </CRow>
 
             <CModal visible={showModal} onClose={handleCloseModal} className="custom-modal">
-                <CModalHeader closeButton className='modal-header'>{modalId === '' ? 'Novo' : 'Editar'} Raça</CModalHeader>
+                <CModalHeader closeButton className='modal-header'>{modalId === '' ? 'Nova' : 'Editar'} Raça</CModalHeader>
 
                 <CModalBody>
                     <CForm>

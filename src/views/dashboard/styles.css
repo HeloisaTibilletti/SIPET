@@ -1,14 +1,165 @@
 .custom-modal {
-    max-width: 600px;
-    margin: 0 auto;
-  }
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.custom-modal .CModalBody {
+  font-size: 16px;
+}
+
+.custom-modal .CButton {
+  background-color: #d995af;
+  border-color: #d995af;
+}
+
+.status-legend {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+  gap: 15px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+h1 {
+  font-family: 'Montserrat', sans-serif;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 35px;
+  font-weight: bold;
   
-  .custom-modal .CModalBody {
-    font-size: 16px;
-  }
+  letter-spacing: 1px;
   
-  .custom-modal .CButton {
-    background-color: #d995af;
-    border-color: #d995af;
-  }
-  
+}
+
+
+.fc-button {
+  background-color: #d995af;
+  color: white; 
+  padding: 10px 20px;
+  font-size: 16px; 
+  border-radius: 5px;
+  cursor: pointer; 
+  transition: background-color 0.3s ease, transform 0.2s ease; 
+  border: none !important;
+}
+
+.fc-button:hover {
+  background-color: #f2b3d0;
+  transform: scale(1.05);
+}
+
+.fc-button-prev, .fc-button-next {
+  background-color: #d995af;
+  color: white;
+}
+
+.fc-button-prev:hover, .fc-button-next:hover {
+  background-color: #f2b3d0;
+}
+
+.fc-button.fc-button-primary {
+  background-color: #d995af;
+  color: white;
+}
+
+.fc-button.fc-button-primary:hover {
+  background-color: #f2b3d0;
+}
+
+.fc-button-group .fc-button {
+  background-color: #d995af;
+  color: white;
+  border-radius: 5px;
+}
+
+.fc-button-group .fc-button.fc-state-active {
+  background-color: #c07b96;
+  color: white;
+}
+
+.fc-button.fc-state-disabled {
+  background-color: #e1b7c2;
+  color: #aaa;
+}
+
+.status-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.green {
+  background-color: green;
+}
+
+.orange {
+  background-color: orange;
+}
+
+.red {
+  background-color: red;
+}
+
+.blue {
+  background-color: blue;
+}
+
+.fc-daygrid-day-number {
+  color: #333;
+}
+
+.fc-event-title {
+  color: #333;
+}
+
+.fc-event:hover .fc-event-title {
+  color: #5c5c5c;
+}
+
+.fc {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.fc-toolbar-title {
+  font-family: 'Montserrat', sans-serif;
+  color: #464646;
+}
+
+.fc-event-time {
+  color: #000000;
+}
+
+.fc-col-header-cell a {
+  text-decoration: none;
+  color: #333;
+}
+
+.fc-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.fc-button:hover {
+  background-color: #45a049;
+  transition: background-color 0.3s ease;
+}
+
+.fc-button.fc-state-disabled {
+  background-color: #ccc;
+  color: #666;
+}
+
+

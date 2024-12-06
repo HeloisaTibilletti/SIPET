@@ -20,8 +20,8 @@ const Consulta = () => {
     { id: 9, name: 'Finalizado' }
   ]);
   const [showModal, setShowModal] = useState(false);
-  const [showPetModal, setShowPetModal] = useState(false); // Controle do modal do pet
-  const [petDetalhado, setPetDetalhado] = useState(null); // Dados do pet selecionado
+  const [showPetModal, setShowPetModal] = useState(false);
+  const [petDetalhado, setPetDetalhado] = useState(null);
   const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(null);
   const [showClienteModal, setShowClienteModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -52,24 +52,12 @@ const Consulta = () => {
       }
     };
 
-    const fetchAgendamentoDetails = async () => {
-      try {
-        // Certifique-se de que está usando agendamentoId e não agendamento_id
-        const response = await fetch(`/api/agendamentos/${agendamentoId}`);
-        const data = await response.json();
-        setAgendamento(data);
-        setProdutosAssociados(data.produtos); // Armazenando os produtos
-      } catch (error) {
-        console.error("Erro ao buscar detalhes do agendamento", error);
-      }
-    };
-
     const fetchPets = async () => {
       try {
         let response = await api.getPet();
         if (response && response.list) {
           setPets(response.list);
-          console.log("Pets:", response.list); // Verificar os dados
+          console.log("Pets:", response.list);
         }
       } catch (error) {
         console.error("Erro ao buscar pets:", error);
@@ -89,7 +77,6 @@ const Consulta = () => {
     };
 
     fetchAgendamentos();
-    fetchAgendamentoDetails();
     fetchClientes();
     fetchPets();
     fetchUsers();
@@ -121,7 +108,6 @@ const Consulta = () => {
       const petNome = getPetName(agendamento.id_pet).toLowerCase();
       const termoBusca = searchTerm.toLowerCase();
 
-      // Filtra por nome do cliente e também considera o status selecionado
       const nomeClienteCorreto = clienteNome.includes(termoBusca);
       const statusCorreto = agendamento.id_status === statusSelecionado;
 
@@ -132,8 +118,8 @@ const Consulta = () => {
   const getProdutosPorAgendamento = async (agendamentoId) => {
     try {
       const response = await fetch(`/api/agendamentos/${agendamentoId}/produtos`);
-      console.log(await response.text());  // Exibe o conteúdo da resposta
-      const data = await response.json(); // Aqui ocorre o erro se a resposta não for JSON
+      console.log(await response.text());
+      const data = await response.json();
       return data;
     } catch (error) {
       console.error('Erro ao buscar produtos do agendamento:', error);
@@ -220,7 +206,7 @@ const Consulta = () => {
 
     if (result.isConfirmed) {
       try {
-        await api.updateAgendamento(id, { id_status: 9 }); // Atualiza para "Finalizado"
+        await api.updateAgendamento(id, { id_status: 9 });
         setAgendamentos(
           agendamentos.map((agendamento) =>
             agendamento.id === id
@@ -243,15 +229,15 @@ const Consulta = () => {
       text: "Você deseja cancelar este agendamento?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#dc3545", // Vermelho (cancelar)
-      cancelButtonColor: "#6c757d", // Cinza (manter)
+      confirmButtonColor: "#dc3545",
+      cancelButtonColor: "#6c757d",
       confirmButtonText: "Sim, cancelar!",
       cancelButtonText: "Manter",
     });
 
     if (result.isConfirmed) {
       try {
-        await api.updateAgendamento(id, { id_status: 8 }); // Atualiza para "Cancelado"
+        await api.updateAgendamento(id, { id_status: 8 });
         setAgendamentos(
           agendamentos.map((agendamento) =>
             agendamento.id === id
@@ -270,14 +256,17 @@ const Consulta = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Consulta de Agendamentos</h2>
-      {/* Div para os botões de filtro e o campo de pesquisa */}
+      <div style={{ textAlign: 'center' }}>
+        <h2>
+          <CIcon icon={cilMagnifyingGlass} size='xl' style={{ marginRight: '10px' }} />
+          Consulta de Agendamentos
+        </h2>
+      </div>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
-        {/* Botões de filtro */}
         <div>
           <CButton
             color={statusSelecionado === 7 ? "info" : "secondary"}
-            onClick={() => setStatusSelecionado(7)} // ID para "Em Aberto"
+            onClick={() => setStatusSelecionado(7)}
             style={{ marginRight: "10px", padding: "10px 20px" }}
           >
             <CIcon icon={cilSync} style={{ marginRight: "5px" }} />
@@ -285,19 +274,19 @@ const Consulta = () => {
           </CButton>
           <CButton
             color={statusSelecionado === 8 ? "danger" : "secondary"}
-            onClick={() => setStatusSelecionado(8)} // ID para "Cancelado"
+            onClick={() => setStatusSelecionado(8)}
             style={{ marginRight: "10px", padding: "10px 20px" }}
           >
             <CIcon icon={cilBan} style={{ marginRight: "5px" }} />
-            Cancelado
+            Cancelados
           </CButton>
           <CButton
             color={statusSelecionado === 9 ? "success" : "secondary"}
-            onClick={() => setStatusSelecionado(9)} // ID para "Finalizado"
+            onClick={() => setStatusSelecionado(9)}
             style={{ padding: "10px 20px" }}
           >
             <CIcon icon={cilCheck} style={{ marginRight: "5px" }} />
-            Finalizado
+            Finalizados
           </CButton>
         </div>
 
@@ -311,7 +300,7 @@ const Consulta = () => {
         />
       </div>
 
-      {/* Tabela de agendamentos */}
+
       <CTable hover responsive>
         <CTableHead>
           <CTableRow>
@@ -439,18 +428,7 @@ const Consulta = () => {
           <p><strong>Observações:</strong> {agendamentoSelecionado?.observacoes || "Não informado"}</p>
           {/* Exibindo os produtos do agendamento */}
           <p><strong>Produtos:</strong></p>
-          {produtosAssociados.length > 0 ? (
-            <ul>
-              {produtosAssociados.map((produto) => (
-                <li key={produto.id}>
-                  {produto.nome} - R${produto.valor}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>Sem produtos associados a este agendamento.</p>
-          )}
-
+          <p>Sem produtos associados a este agendamento.</p>
           <p><strong>Transporte: </strong>
             {agendamentoSelecionado?.transporte ? (
               <>
@@ -524,7 +502,7 @@ const Consulta = () => {
           </CButton>
         </CModalFooter>
       </CModal>
-    </div>
+    </div >
   );
 
 };

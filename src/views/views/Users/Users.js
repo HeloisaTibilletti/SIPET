@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import useApi from '../../../services/api';
 import { CButton, CFormCheck, CSpinner, CCard, CCardBody, CCardHeader, CCol, CRow, CTable, CTableHeaderCell, CTableDataCell, CTableRow, CModal, CModalHeader, CModalBody, CModalFooter, CForm, CFormLabel, CFormInput } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
-import { cilPlus } from '@coreui/icons';
+import { cilPlus, cilUser } from '@coreui/icons';
 import './Users.css';
+import Swal from 'sweetalert2';
 
 export default () => {
     const api = useApi();
@@ -22,8 +23,8 @@ export default () => {
 
     const [modalId, setModalId] = useState('');
     const [modalLoading, setModalLoading] = useState(false);
-    const [sortKey, setSortKey] = useState('nome'); // Define o campo padrão para ordenação
-    const [sortDirection, setSortDirection] = useState('asc'); // 'asc' para ascendente, 'desc' para descendente    
+    const [sortKey, setSortKey] = useState('nome');
+    const [sortDirection, setSortDirection] = useState('asc');
 
     const fields = [
         { label: 'Nome', key: 'nome' },
@@ -44,7 +45,7 @@ export default () => {
                             ...i,
                             actions: (
                                 <div>
-                                    
+
                                     <CButton color="danger" onClick={() => handleRemoveButton(i.id)}>Excluir</CButton>
                                 </div>
                             ),
@@ -84,7 +85,7 @@ export default () => {
     };
 
     const handleEditButton = (item) => {
-        if (item && item.id && item.nome && item.sobrenome && item.telefone && item.email  && item.id_funcao) {
+        if (item && item.id && item.nome && item.sobrenome && item.telefone && item.email && item.id_funcao) {
             setModalId(item.id);
             setModalTitleField(item.nome);
             setModalSobrenomeField(item.sobrenome);
@@ -101,7 +102,7 @@ export default () => {
     const handleModalSave = async () => {
         if (modalTitleField) {
             setModalLoading(true);
-    
+
             let result;
             let data = {
                 nome: modalTitleField,
@@ -112,7 +113,7 @@ export default () => {
                 password_confirm: modalPasswordConfirmField,
                 id_funcao: modalFuncaoField,
             };
-    
+
             try {
                 if (modalId === '') {
                     // Adicionando novo item
@@ -129,19 +130,19 @@ export default () => {
                             id_funcao: result.data.id_funcao,
                             actions: (
                                 <div>
-                                    
+
                                     <CButton color="danger" onClick={() => handleRemoveButton(result.data.id)}>Excluir</CButton>
                                 </div>
                             ),
                         };
                         setList((prevList) => [...prevList, newItem]);
                     } else {
-                        
+
                     }
                 } else {
-                    // Atualizando item existente
+
                     result = await api.updateUsers(modalId, data);
-                    console.log('Resultado da API:', result); // Adicione esta linha para depuração
+                    console.log('Resultado da API:', result);
                     if (result.hasOwnProperty('error') && result.error === '') {
                         setList((prevList) =>
                             prevList.map((item) =>
@@ -173,32 +174,61 @@ export default () => {
             alert('Preencha o campo nome');
         }
     };
-    
+
+
+
 
     const handleRemoveButton = async (id) => {
-        console.log('ID para remoção:', id);  // Adicione esta linha para verificar o ID
+        console.log('ID para remoção:', id);
 
         if (!id) {
             console.error('ID não fornecido para remoção.');
             return;
         }
 
-        if (window.confirm('Tem certeza que deseja excluir?')) {
+        // Exibe o SweetAlert2 de confirmação
+        const result = await Swal.fire({
+            title: 'Tem certeza?',
+            text: "Você não poderá reverter isso!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (result.isConfirmed) {
             try {
-                const result = await api.removeUsers(String(id));  // Certifique-se de passar o ID como string
+                const result = await api.removeUsers(String(id));
                 if (result.error === '') {
                     setList((prevList) =>
                         prevList.filter((user) => user.id !== id)
                     );
-
+                    Swal.fire(
+                        'Removido!',
+                        'O usuário foi removido com sucesso.',
+                        'success'
+                    );
                 } else {
-                    alert('Erro ao remover o usuário: ' + result.error);
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro',
+                        text: 'Erro ao remover o usuário: ' + result.error
+                    });
                 }
             } catch (error) {
-                alert('Erro ao comunicar com a API: ' + error.message);
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro de comunicação',
+                    text: 'Erro ao comunicar com a API: ' + error.message
+                });
             }
         }
     };
+
 
     const handleNewButton = () => {
         setModalId('');
@@ -215,7 +245,12 @@ export default () => {
         <>
             <CRow>
                 <CCol>
-                    <h2>Consulta de Usuários</h2>
+                <div style={{ textAlign: 'center' }}>
+                        <h2>
+                            <CIcon icon={cilUser} size='xl' style={{ marginRight: '10px' }} />
+                            Consulta de Usuários
+                        </h2>
+                    </div>
 
                     <CCard>
                         <CCardHeader>
@@ -330,9 +365,9 @@ export default () => {
                             name="flexRadioDefault"
                             id="modal-funcao"
                             label="Administrador"
-                            value="1" // Valor que será salvo no banco de dados
-                            checked={modalFuncaoField === '1'} // Verifica se o valor atual é o selecionado
-                            onChange={(e) => setModalFuncaoField(e.target.value)} // Atualiza o estado quando o valor é alterado
+                            value="1"
+                            checked={modalFuncaoField === '1'}
+                            onChange={(e) => setModalFuncaoField(e.target.value)}
                             defaultChecked
                         />
 
@@ -341,10 +376,10 @@ export default () => {
                             name="flexRadioDefault"
                             id="flexRadioDefault2"
                             label="Esteticista"
-                            value="2" // Valor que será salvo no banco de dados
-                            checked={modalFuncaoField === '2'} // Verifica se o valor atual é o selecionado
-                            onChange={(e) => setModalFuncaoField(e.target.value)} // Atualiza o estado quando o valor é alterado
-                            
+                            value="2"
+                            checked={modalFuncaoField === '2'}
+                            onChange={(e) => setModalFuncaoField(e.target.value)}
+
                         />
                     </CForm>
                 </CModalBody>
